@@ -15,7 +15,8 @@
     */
    
 $vistaLectura = !tienePermisoEscritura($_SESSION['accesos']['administrador'],$_SESSION['accesos']['supervisor'],$_SESSION['accesos']['compras'],$_SESSION['accesos']['vendedor25'],$_SESSION['accesos']['soporte'],$_SESSION['accesos']['vendedor']);
-
+$idcontacto = $_GET['idcontacto'];
+//var_dump($idcontacto);
 /*
  * Variable para poner en modo lectura o escritura
  */
@@ -89,13 +90,13 @@ if($guardar == "Guardar"){
         
 		
         unset($_SESSION['cambiaProducto']);
-        
+        $idcontacto = $_GET['idcontacto'];
         $mystring = $_POST['from'];
         $findme   = 'generar_cotizacion_p.php';
         $pos = strpos($mystring, $findme);
         if( $pos === false ){
            //echo "<script>parent.location.reload();</script>";
-           echo "<script>parent.location = 'generar_cotizacion_p.php?g=1';</script>";
+           echo "<script>parent.location = 'generar_cotizacion_p.php?g=2&idcontacto=$idcontacto';</script>";
           //echo "<script>parent.location = 'generar_cotizacion_p.php?reloadCarritoOnId=$producto->id';</script>";
         } else {
           echo "<script>parent.location.reload();</script>";
@@ -157,7 +158,7 @@ if($_POST['crear']!=""){
         unset($_SESSION['cambiaProducto']);
         
 //        if($_SESSION['cotizacion']->update( $_SESSION['cotizacion'] ) ){
-        ?><script>window.parent.location = 'agregar_carrito.php?id=<?echo $producto->id;?>&cantidad=1&backTo=generar_cotizacion_p.php?g=1';</script><?
+        ?><script>window.parent.location = 'agregar_carrito.php?id=<?echo $producto->id;?>&cantidad=1&backTo=generar_cotizacion_p.php?idcontacto=<? echo $idcontacto?>';</script><?
             ?><script>//parent.location.reload();</script><?
 //        }
     }

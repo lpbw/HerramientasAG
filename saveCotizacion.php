@@ -14,5 +14,6 @@ $iva=$_GET['iva'];
     $_SESSION['cotizacion']->subtotal=$sub;
     $_SESSION['cotizacion']->total=$total;
     $_SESSION['cotizacion']->iva=$iva;
+    $_SESSION['cotizacion']->id_contacto = $_GET['idcontacto'];
     saveCotizacionOnDB();
 ?>

@@ -5,7 +5,8 @@
     include_once "checar_sesion_admin.php";
     include_once "coneccion.php";
     session_start();
-
+    $idcontacto = $_GET['idcontacto'];
+    //var_dump($idcontacto);
     if($_REQUEST['buscar']!='' || $_REQUEST['codigo_buscar']!='' || $_REQUEST['familia']!='' || $_REQUEST['proveedor']!='' || $_SESSION['buscadorCotizaciones']['codigo_buscar']!='' || $_SESSION['buscadorCotizaciones']['familia']!='' || $_SESSION['buscadorCotizaciones']['proveedor']!='' || $_REQUEST['submit'])
     {
         $_SESSION['buscadorCotizaciones']['nombre'] = isset($_POST['nombre']) ? $_POST['nombre'] : $_SESSION['buscadorCotizaciones']['nombre'];
@@ -311,7 +312,7 @@
                       </tr>
                       <tr>
                         <td colspan="4" align="right" class="texto_info_negro"><span class="style6">
-                          <input name="comprar" type="button" class="texto_info" id="comprar" onclick="window.location = 'generar_cotizacion_p.php?g=1'" value="Aceptar" />
+                          <input name="comprar" type="button" class="texto_info" id="comprar" onclick="window.location = 'generar_cotizacion_p.php?g=1&idcontacto=<?echo  $idcontacto?>'" value="Aceptar" />
                         </span></td>
                       </tr>
                     </table></td>

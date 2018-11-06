@@ -693,31 +693,53 @@ function saveCotizacion(nextFunction, variables){
         success: nextFunction(variables)
     });
 }
-function autoSaveCotizacion(){
+function autoSaveCotizacion()
+{
     var returnn = true;
-    if(document.getElementById('id_cliente').value!=0 && document.getElementById('id_prioridad').value!=0 && document.getElementById('id_contacto').value!=0){
+    if(document.getElementById('id_cliente').value!=0 && document.getElementById('id_prioridad').value!=0 && document.getElementById('id_contacto').value!=0)
+    {
 	var subtotal = $('#subtotal').val();
     var total = $('#total').val();
     var iva = $('#iva').val();
+    <?
+    if ($_GET['idcontacto']!='')
+    {
+    ?>
+        var idcontacto=<?echo $_GET['idcontacto'];?>
+    <?
+    }
+    else
+    {
+    ?>
+        var idcontacto = document.getElementById('id_contacto').value;
+    <?
+    }
+    ?>
     //console.log(subtotal);
     
     $("#form1").ajaxSubmit({
-            url: 'saveCotizacion.php?sub='+subtotal+'&total='+total+'&iva='+iva, 
+            url: 'saveCotizacion.php?sub='+subtotal+'&total='+total+'&iva='+iva+'&idcontacto='+idcontacto, 
             type: 'post'
         });
-    } else if(document.getElementById('id_cliente').value==0){
+    } 
+    else if(document.getElementById('id_cliente').value==0)
+    {
         alert('Selecciona un cliente');
         document.getElementById('id_cliente').focus();
         returnn = false;
-    } else if(document.getElementById('id_prioridad').value==0){
+    } 
+    else if(document.getElementById('id_prioridad').value==0)
+    {
         alert('Selecciona prioridad');
         document.getElementById('id_prioridad').focus();
         returnn = false;
-    } else if(document.getElementById('id_contacto').value==0){
+    } 
+    else if(document.getElementById('id_contacto').value==0)
+    {
 	 	alert('Selecciona Contacto');
         document.getElementById('id_contacto').focus();
         returnn = false;
-		}
+	}
     return returnn;
 }
 
@@ -1155,10 +1177,10 @@ position: fixed;
                                             <span class="texto_chico_gris">
                                                 <!-- boton buscar producto -->
                                                 <span class="texto_info_negro" style="padding:0px 10px 0px 10px; background-color:#F5F5F5; width:880">
-                                                    <input <? echo $esLectura;?> style="float:left" name="Agregar" type="button" id="Agregar" value="Buscar producto" onclick="if(autoSaveCotizacion()) window.location = 'seleccionar_productos_cotizacion.php'; " class="texto_info_negro" />
+                                                    <input <? echo $esLectura;?> style="float:left" name="Agregar" type="button" id="Agregar" value="Buscar producto" onclick="if(autoSaveCotizacion()) window.location = 'seleccionar_productos_cotizacion.php?idcontacto='+document.getElementById('id_contacto').value; " class="texto_info_negro" />
                                                 </span>
                                                 <!-- boton agregar especial -->
-                                                <input <? echo $esLectura;?> style="float:left" type="button" class="texto_info_negro" id="Agregar5" onClick="if(autoSaveCotizacion()) abrir('cambia_producto_especial.php');" value="Agregar Especial"/>
+                                                <input <? echo $esLectura;?> style="float:left" type="button" class="texto_info_negro" id="Agregar5" onClick="if(autoSaveCotizacion()) abrir('cambia_producto_especial.php?idcontacto='+document.getElementById('id_contacto').value);" value="Agregar Especial"/>
                                             </span>
                                             <!-- boton producto por codigo -->
                                             Agregar producto por código
@@ -1782,11 +1804,28 @@ position: fixed;
             var select = document.getElementById("id_contacto");
             var options=document.getElementsByTagName("option");
             var contacto = select.value;
-            $("#form1").ajaxSubmit({
-                    url: 'saveCotizacion.php?sub='+subtotal+'&total='+total+'&iva='+iva, 
-                    type: 'post'
-                });
-            }
+            <?
+             if ($_GET['idcontacto']!='')
+                {
+                ?>
+                    var idcontacto=<?echo $_GET['idcontacto'];?>
+                <?
+                }
+                else
+                {
+                ?>
+                    var idcontacto = document.getElementById('id_contacto').value;
+                <?
+                }
+                ?>
+                //console.log(subtotal);
+                
+                $("#form1").ajaxSubmit({
+                        url: 'saveCotizacion.php?sub='+subtotal+'&total='+total+'&iva='+iva+'&idcontacto='+idcontacto, 
+                        type: 'post'
+                    });
+                } 
+            
 
 
             //obtiene el subtotal de todos los productos, los suma y otiene el iva
@@ -1844,15 +1883,19 @@ position: fixed;
         saveCotizacionOnDB();
     }
     //guardar producto agregado y cotizacion nueva.
-    //var_dump($_GET['g']);
+    //var_dump($_GET['idcontacto']);
+    $idcon2 = $_GET['idcontacto'];
     $g = $_GET['g'];
-    if ($g == "1" || $g == 1)
+    //var_dump($g);
+    if ($g == "1" || $g == 1 || $idcon2!= "")
     {
         echo "<script>CalcularIva2();</script>";
         echo "<script>autoSaveCotizacion2();</script>";
         guardarCotizacion();
+       
         //saveCotizacionOnDB();
         $g="";
+        $idcon2="";
     }
     //
     //var_dump($_GET['reloadCarritoOnId']);

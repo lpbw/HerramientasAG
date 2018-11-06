@@ -206,7 +206,7 @@
     function clearURIVariables()
     {
         $location = explode('?',$_SERVER['REQUEST_URI']);
-        echo "<script> window.location = '<? echo $location[0];?>'; </script>";
+        echo "<script> window.location = 'generar_cotizacion_p.php'; </script>";
     }
 
     if(isset($_REQUEST['agregarProductoPorCodigo']))
@@ -1899,6 +1899,7 @@ position: fixed;
     }
     //
     //var_dump($_GET['reloadCarritoOnId']);
+    $flag=$_GET['flag'];
     if($_GET['reloadCarritoOnId']!='')
     {
         reloadCarrito($_GET['reloadCarritoOnId']);
@@ -1906,5 +1907,11 @@ position: fixed;
         echo "<script>CalcularIva2();</script>";
         echo "<script>autoSaveCotizacion2();</script>";
         guardarCotizacion();
+        if ($flag==0)
+        {
+            $flag='';
+          //echo "<script>location = 'generar_cotizacion_p.php';</script>";
+        }
+        
     }
 ?>

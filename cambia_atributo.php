@@ -36,7 +36,7 @@ if($_POST["guardar"]=="Guardar"){
 			$id_version_cotizacion)){
 		
         if($_SESSION['cotizacion']->id!=""){
-            ?><script>parent.location = 'generar_cotizacion_p.php?reloadCarritoOnId=<? echo $producto->id;?>&flag=0&idcontacto=$idcontacto';</script><?
+            ?><script>parent.location = 'generar_cotizacion_p.php?reloadCarritoOnId=<? echo $producto->id;?>&flag=0&idcontacto=<? echo $idcontacto; ?>';</script><?
             
         } else {
             ?><script>parent.location.reload();</script><?

@@ -206,7 +206,7 @@
     function clearURIVariables()
     {
         $location = explode('?',$_SERVER['REQUEST_URI']);
-        echo "<script> window.location = 'generar_cotizacion_p.php'; </script>";
+        echo "<script> window.location = '".$location[0]."'; </script>";
     }
 
     if(isset($_REQUEST['agregarProductoPorCodigo']))

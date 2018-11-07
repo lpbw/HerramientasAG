@@ -103,7 +103,6 @@
             $cotizacion->subtotal = $_SESSION['cotizacion']->subtotal;
             $cotizacion->total = $_SESSION['cotizacion']->total;
             $cotizacion->iva = $_SESSION['cotizacion']->iva;
-            $cotizacion->id_contacto = $_SESSION['cotizacion']->id_contacto;
             $consulta = "UPDATE Cotizaciones SET id=$cotizacion->id,id_usuario_ultima_modificacion=$cotizacion->id_usuario,";
             $consulta .= "prioridad='$cotizacion->prioridad',id_cliente = '$cotizacion->id_cliente',id_contacto='$cotizacion->id_contacto',";
             $consulta .= "notas_adicionales='$cotizacion->notas_adicionales',LAB='$cotizacion->LAB',terminos_entrega='$cotizacion->terminos_entrega',extra='$cotizacion->extra',";
@@ -273,10 +272,12 @@
                 return FALSE;
         }
 
-    public function addProducto($producto)
-    {
-        $consulta = "INSERT INTO Cotizaciones_Productos(id_version, id_cotizacion, id_producto, fecha_entrega, comentario, descuento, cantidad, precio, recargo, partida )";
-        $consulta .= "VALUES($this->id_version, '$this->id', '$producto->id',DEFAULT,'$producto->comentario', '$producto->descuento','$producto->cantidad', '$producto->precio', '$producto->recargo', '$producto->partida')";
+    public function addProducto($producto) {
+        $consulta = "INSERT INTO Cotizaciones_Productos
+            ( id_version, id_cotizacion, id_producto, fecha_entrega, comentario, descuento, cantidad, precio, recargo, partida )
+            VALUES
+            ( $this->id_version, '$this->id', '$producto->id',DEFAULT,'$producto->comentario', '$producto->descuento',
+                '$producto->cantidad', '$producto->precio', '$producto->recargo', '$producto->partida')";
         $resultado = mysql_query($consulta) or print("Relacion no exitosa <br>$consulta<br>" . mysql_error());
 
         if ($resultado)

@@ -482,5 +482,12 @@
                 return FALSE;
             }
         }
-}
+
+        public function ActualizarProductoCotizacion($precio,$idprdcotiza)
+        {
+            $consulta = "UPDATE Cotizaciones_Productos";
+            $consulta .= " SET precio = '$precio'";
+            $consulta .= " WHERE  id = $idprdcotiza";
+            mysql_query($consulta) or die("Fallo funcion ActualizarProductoCotizacion: $consulta".mysql_error());        }
+        }
 ?>

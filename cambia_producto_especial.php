@@ -10,6 +10,11 @@
     include_once "checar_permisos.php";
     session_start();
     checarAcceso($_SESSION['accesos']['vendedor25']);
+
+    //Recibe el id del contacto de generar_cotizacion_p
+    $idcontacto = $_GET['idcontacto'];
+    $idprodcoti = $_GET['idprodcoti'];
+  //var_dump($idcontacto);
     /*
     *PERMISOS DE ESCRITURA TIENEN: Administrador, Supervisor y Compras
     */
@@ -72,7 +77,6 @@ if($guardar == "Guardar"){
 	
 	$producto = new Producto();
 	$producto->get($_SESSION['cambiaProducto']->id);
-		
 	if($no_actualizado_en_microsip==1)
 		$modificado=0;
 	else $modificado =1;
@@ -86,7 +90,7 @@ if($guardar == "Guardar"){
             $unidad_metrica, $exportar_microsip,
             $stock, $codigo_descuento, $tipo_moneda_usa,
             $unidad_metrica_ingles,$recargo = 0,$productoEspecial = TRUE,'0','0','0','0', '0', $factor, $flete_cliente, $flete_proveedor, $_POST['v_cliente'], $_POST['v_proveedor']) ){
-        
+        //$producto -> ActualizarProductoCotizacion($precio,$idprodcoti); 
 		
         unset($_SESSION['cambiaProducto']);
         
@@ -95,10 +99,13 @@ if($guardar == "Guardar"){
         $pos = strpos($mystring, $findme);
         if( $pos === false ){
            //echo "<script>parent.location.reload();</script>";
-           echo "<script>parent.location = 'generar_cotizacion_p.php?g=1';</script>";
-          //echo "<script>parent.location = 'generar_cotizacion_p.php?reloadCarritoOnId=$producto->id';</script>";
+          // echo "<script>alert('1');</script>";
+           //echo "<script>parent.location = 'generar_cotizacion_p.php?idcontacto=$idcontacto';</script>";
+          echo "<script>parent.location = 'generar_cotizacion_p.php?reloadCarritoOnId=$producto->id&idcontacto=$idcontacto';</script>";
         } else {
-          echo "<script>parent.location.reload();</script>";
+          //echo "<script>alert('2');</script>";
+          echo "<script>parent.location = 'generar_cotizacion_p.php?reloadCarritoOnId=$producto->id&idcontacto=$idcontacto';</script>";
+          //echo "<script>parent.location.reload();</script>";
           // echo "<script>parent.location = 'generar_cotizacion_p.php?reloadCarritoOnId=$producto->id';</script>";
         }
     }
@@ -157,7 +164,7 @@ if($_POST['crear']!=""){
         unset($_SESSION['cambiaProducto']);
         
 //        if($_SESSION['cotizacion']->update( $_SESSION['cotizacion'] ) ){
-        ?><script>window.parent.location = 'agregar_carrito.php?id=<?echo $producto->id;?>&cantidad=1&backTo=generar_cotizacion_p.php?g=1';</script><?
+        ?><script>window.parent.location = 'agregar_carrito.php?id=<?echo $producto->id;?>&cantidad=1&backTo=generar_cotizacion_p.php?idcontacto=<? echo $idcontacto;?>';</script><?
             ?><script>//parent.location.reload();</script><?
 //        }
     }
@@ -262,6 +269,7 @@ function cambia_mayusculas(campo)
 </head>
 
 <body>
+<?echo $idcontacto;?>
 <form action="" method="post" enctype="multipart/form-data" name="form1" id="form1">
 <div align="center" style="margin:20px">
   

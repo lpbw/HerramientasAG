@@ -72,6 +72,9 @@ if($_REQUEST['id']!=""){
 		
         if($_SESSION['cotizacion']->id!=""){
             ?><script>parent.location = 'generar_cotizacion_p.php?reloadCarritoOnId=<? echo $producto->id;?>&flag=0';</script><?
+<<<<<<< HEAD
+>>>>>>> parent of 847adbd... guardar contacto
+=======
 >>>>>>> parent of 847adbd... guardar contacto
             
         } 

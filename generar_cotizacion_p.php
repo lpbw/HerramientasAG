@@ -2533,9 +2533,12 @@ position: fixed;
                                                                     ?>
 
                                                                     <?
+<<<<<<< HEAD
 
                                                                         $idcon = $_SESSION['cotizacion'] ->id_contacto; 
 
+=======
+>>>>>>> parent of 847adbd... guardar contacto
                                                                         $conDescr="";
 
                                                                         if($_SESSION['cotizacion'] ->idioma == 'ESP')
@@ -2573,6 +2576,7 @@ position: fixed;
                                                                         if($conDescr == "no")
 
                                                                         {
+<<<<<<< HEAD
 
 
 
@@ -2582,6 +2586,10 @@ position: fixed;
 
                                                                             <a href="cambia_atributo.php?<? echo "attrName=$attrName&id=$producto->id&idcontacto=$idcon";?>" onClick="" class="texto_info_negro_c iframe"> 
 
+=======
+                                                                    ?>
+                                                                            <a href="cambia_atributo.php?<? echo "attrName=$attrName&id=$producto->id";?>" onClick="" class="texto_info_negro_c iframe"> 
+>>>>>>> parent of 847adbd... guardar contacto
                                                                                 Sin descripci&oacute;n 
 
                                                                                 <img src="images/warning.png" alt="" name="warning" width="16" height="16" id="warning"/>

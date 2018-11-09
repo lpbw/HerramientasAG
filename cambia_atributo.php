@@ -1,4 +1,5 @@
 <?
+<<<<<<< HEAD
     include 'Usuario.php';
     include 'Producto.php';
     include 'Cotizacion.php';
@@ -10,6 +11,17 @@
     if($_REQUEST['id']!="")
     {
         $producto = new Producto();
+=======
+include 'Usuario.php';
+include 'Producto.php';
+include 'Cotizacion.php';
+session_start();
+include "checar_sesion_admin.php";
+include "coneccion.php";
+
+if($_REQUEST['id']!=""){
+	$producto = new Producto();
+>>>>>>> parent of 847adbd... guardar contacto
         $producto->get($_REQUEST['id']);
         $producto->attrName = $_REQUEST['attrName'];
             
@@ -38,6 +50,7 @@
             $id_version_cotizacion !="";
         }    
     
+<<<<<<< HEAD
         if($producto->updateOneAttr($producto->attrName,$_REQUEST['attrValue'], $_SESSION['usuario']->id,$requireRevision = TRUE, $id_cotizacion,$id_version_cotizacion))
         {
             
@@ -51,6 +64,15 @@
             {
                 echo "<script>parent.location.reload();</script>";
             }
+=======
+    if($producto->updateOneAttr($producto->attrName, 
+			$_REQUEST['attrValue'], $_SESSION['usuario']->id, 
+            $requireRevision = TRUE, $id_cotizacion, 
+			$id_version_cotizacion)){
+		
+        if($_SESSION['cotizacion']->id!=""){
+            ?><script>parent.location = 'generar_cotizacion_p.php?reloadCarritoOnId=<? echo $producto->id;?>&flag=0';</script><?
+>>>>>>> parent of 847adbd... guardar contacto
             
         } 
         else 

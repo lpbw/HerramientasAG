@@ -482,5 +482,10 @@
                 return FALSE;
             }
         }
+
+        public function UpdateProductoCotizacion($Atributo,$Valor,$IdPCotizacion)
+        {
+
+        }
 }
 ?>

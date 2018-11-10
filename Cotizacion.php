@@ -103,6 +103,7 @@
             $cotizacion->subtotal = $_SESSION['cotizacion']->subtotal;
             $cotizacion->total = $_SESSION['cotizacion']->total;
             $cotizacion->iva = $_SESSION['cotizacion']->iva;
+            $cotizacion->id_contacto =  $_SESSION['cotizacion']->id_contacto;
             $consulta = "UPDATE Cotizaciones SET id=$cotizacion->id,id_usuario_ultima_modificacion=$cotizacion->id_usuario,";
             $consulta .= "prioridad='$cotizacion->prioridad',id_cliente = '$cotizacion->id_cliente',id_contacto='$cotizacion->id_contacto',";
             $consulta .= "notas_adicionales='$cotizacion->notas_adicionales',LAB='$cotizacion->LAB',terminos_entrega='$cotizacion->terminos_entrega',extra='$cotizacion->extra',";

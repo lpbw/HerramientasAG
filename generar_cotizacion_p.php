@@ -140,9 +140,9 @@
 
     if($_POST['posicion_borrar']!="")
     {
-        
+        $Contacto = $_POST['id_contacto'];
+        $_GET['idcontacto']=$Contacto;
         unset( $_SESSION['carrito'][ $_POST['posicion_borrar'] ] );
-        unset( $_SESSION['cotizacion']->productos[ $_POST['posicion_borrar'] ] );
         $count = 1;
         foreach ($_SESSION['cotizacion'] -> productos as $n => $producto)
         {
@@ -701,8 +701,23 @@ function autoSaveCotizacion(){
     var iva = $('#iva').val();
     //console.log(subtotal);
     
+    <?
+                if ($_GET['idcontacto'] != "" )
+                {
+            ?>
+                    var idcontacto = <?echo $_GET['idcontacto'];?>;
+            <?
+                }
+                else
+                {
+            ?>   
+                    var idcontacto = document.getElementById("id_contacto").value;
+            <?
+                }
+            ?> 
+
     $("#form1").ajaxSubmit({
-            url: 'saveCotizacion.php?sub='+subtotal+'&total='+total+'&iva='+iva, 
+            url: 'saveCotizacion.php?sub='+subtotal+'&total='+total+'&iva='+iva+'&idcontacto='+idcontacto, 
             type: 'post'
         });
     } else if(document.getElementById('id_cliente').value==0){
@@ -1155,7 +1170,7 @@ position: fixed;
                                             <span class="texto_chico_gris">
                                                 <!-- boton buscar producto -->
                                                 <span class="texto_info_negro" style="padding:0px 10px 0px 10px; background-color:#F5F5F5; width:880">
-                                                    <input <? echo $esLectura;?> style="float:left" name="Agregar" type="button" id="Agregar" value="Buscar producto" onclick="if(autoSaveCotizacion()) window.location = 'seleccionar_productos_cotizacion.php'; " class="texto_info_negro" />
+                                                    <input <? echo $esLectura;?> style="float:left" name="Agregar" type="button" id="Agregar" value="Buscar producto" onclick="if(autoSaveCotizacion()) window.location = 'seleccionar_productos_cotizacion.php?idcontacto=<? echo $_SESSION['cotizacion']->id_contacto;?>'; " class="texto_info_negro" />
                                                 </span>
                                                 <!-- boton agregar especial -->
                                                 <input <? echo $esLectura;?> style="float:left" type="button" class="texto_info_negro" id="Agregar5" onClick="if(autoSaveCotizacion()) abrir('cambia_producto_especial.php');" value="Agregar Especial"/>
@@ -1349,7 +1364,7 @@ position: fixed;
                                                                                 //$pr = ( ((1 - $producto->descuento ) * $producto->precio) + ($producto->recargo * $valor_moneda) );
                                                                                 //echo $pr;
                                                                                  //echo $valor_moneda;
-                                                                               echo getFormatedNumberForMoney(( ($producto->precio) + ($producto->recargo * $valor_moneda) ));
+                                                                               echo getFormatedNumberForMoney(( ($producto->precio / $valor_moneda) + $producto->recargo ));
                                                                             }
                                                                             else if($producto->tipo_moneda_usa == $_SESSION['cotizacion']->tipo_moneda)
                                                                             {
@@ -1782,8 +1797,24 @@ position: fixed;
             var select = document.getElementById("id_contacto");
             var options=document.getElementsByTagName("option");
             var contacto = select.value;
+
+            <?
+                if ($_GET['idcontacto'] != "" )
+                {
+            ?>
+                    var idcontacto = <?echo $_GET['idcontacto'];?>;
+            <?
+                }
+                else
+                {
+            ?>   
+                    var idcontacto = document.getElementById("id_contacto").value;
+            <?
+                }
+            ?>     
+
             $("#form1").ajaxSubmit({
-                    url: 'saveCotizacion.php?sub='+subtotal+'&total='+total+'&iva='+iva, 
+                    url: 'saveCotizacion.php?sub='+subtotal+'&total='+total+'&iva='+iva+'&idcontacto='+idcontacto, 
                     type: 'post'
                 });
             }
@@ -1839,8 +1870,12 @@ position: fixed;
     //Borrar producto y guardar cotizacion.
     if ($borrar==1)
     {
+        $Contacto = $_POST['id_contacto'];
+        //echo "<script>alert('$Contacto');</script>";
+        $_SESSION['cotizacion']->id_contacto=$Contacto;
         guardarCotizacion();
         echo "<script>CalcularIva();</script>";
+        echo "<script>autoSaveCotizacion2();</script>";
         saveCotizacionOnDB();
     }
     //guardar producto agregado y cotizacion nueva.
@@ -1848,6 +1883,8 @@ position: fixed;
     $g = $_GET['g'];
     if ($g == "1" || $g == 1)
     {
+        $i = $_GET['idcontacto'];
+        //echo "<script>alert('$i');</script>";
         echo "<script>CalcularIva2();</script>";
         echo "<script>autoSaveCotizacion2();</script>";
         guardarCotizacion();

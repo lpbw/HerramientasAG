@@ -13,7 +13,9 @@
     /*
     *PERMISOS DE ESCRITURA TIENEN: Administrador, Supervisor y Compras
     */
-   
+
+   $idcontacto = $_GET['idcontacto'];//recibido de generar_cotizacion_p
+
 $vistaLectura = !tienePermisoEscritura($_SESSION['accesos']['administrador'],$_SESSION['accesos']['supervisor'],$_SESSION['accesos']['compras'],$_SESSION['accesos']['vendedor25'],$_SESSION['accesos']['soporte'],$_SESSION['accesos']['vendedor']);
 
 /*
@@ -144,11 +146,7 @@ if($_POST['crear']!=""){
         
 //        agregarCarrito($producto);
         unset($_SESSION['cambiaProducto']);
-        echo "<script>window.parent.location = 'agregar_carrito.php?id=echo $producto->id&cantidad=1&backTo=generar_cotizacion_p.php?g=1';</script>";
-//        if($_SESSION['cotizacion']->update( $_SESSION['cotizacion'] ) ){
-        
-            ?><script>//parent.location.reload();</script><?
-//        }
+        echo "<script>window.parent.location = 'agregar_carrito.php?id=$producto->id&cantidad=1&backTo=generar_cotizacion_p.php?g=1';</script>";
     }
 }
 

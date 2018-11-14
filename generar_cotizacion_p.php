@@ -142,6 +142,7 @@
     {
         $Contacto = $_POST['id_contacto'];
         $_GET['idcontacto']=$Contacto;
+        //echo "<script>alert('".$_GET['idcontacto']."')</script>";
         unset( $_SESSION['carrito'][ $_POST['posicion_borrar'] ] );
         $count = 1;
         foreach ($_SESSION['cotizacion'] -> productos as $n => $producto)
@@ -157,6 +158,7 @@
         }
         //guardarCotizacion();
         $borrar=1;
+       
         //saveCotizacionOnDB();
         
     }
@@ -1173,7 +1175,7 @@ position: fixed;
                                                     <input <? echo $esLectura;?> style="float:left" name="Agregar" type="button" id="Agregar" value="Buscar producto" onclick="if(autoSaveCotizacion()) window.location = 'seleccionar_productos_cotizacion.php?idcontacto=<? echo $_SESSION['cotizacion']->id_contacto;?>'; " class="texto_info_negro" />
                                                 </span>
                                                 <!-- boton agregar especial -->
-                                                <input <? echo $esLectura;?> style="float:left" type="button" class="texto_info_negro" id="Agregar5" onClick="if(autoSaveCotizacion()) abrir('cambia_producto_especial.php');" value="Agregar Especial"/>
+                                                <input <? echo $esLectura;?> style="float:left" type="button" class="texto_info_negro" id="Agregar5" onClick="if(autoSaveCotizacion()) abrir('cambia_producto_especial.php?idcontacto=<? echo $_SESSION['cotizacion']->id_contacto;?>');" value="Agregar Especial"/>
                                             </span>
                                             <!-- boton producto por codigo -->
                                             Agregar producto por código
@@ -1861,6 +1863,7 @@ position: fixed;
                 //autoSaveCotizacion2();
             }
         }
+        
         </script>
         <form action="" method="post" name="formBorrarProductoCarrito" id="formBorrarProductoCarrito">
         </form>
@@ -1870,21 +1873,22 @@ position: fixed;
     //Borrar producto y guardar cotizacion.
     if ($borrar==1)
     {
-        $Contacto = $_POST['id_contacto'];
-        //echo "<script>alert('$Contacto');</script>";
-        $_SESSION['cotizacion']->id_contacto=$Contacto;
+       
         guardarCotizacion();
         echo "<script>CalcularIva();</script>";
-        echo "<script>autoSaveCotizacion2();</script>";
+        echo "<script>autoSaveCotizacion();</script>";
         saveCotizacionOnDB();
+        //clearURIVariables();
+        echo "<script> window.location = 'generar_cotizacion_p.php'; </script>";
+        //echo "<script>parent.frames['generar_cotizacion_p'].location.reload();</script>";
+        //echo "<script>location.href='generar_cotizacion_p.php?idCotizacionEditar=".$_SESSION['cotizacion']->id."&idVersion=0'</script>";
     }
     //guardar producto agregado y cotizacion nueva.
     //var_dump($_GET['g']);
-    $g = $_GET['g'];
-    if ($g == "1" || $g == 1)
+
+    $g = $_GET['g'];//id contacto de cambia_producto_especial
+    if ($g == "")
     {
-        $i = $_GET['idcontacto'];
-        //echo "<script>alert('$i');</script>";
         echo "<script>CalcularIva2();</script>";
         echo "<script>autoSaveCotizacion2();</script>";
         guardarCotizacion();

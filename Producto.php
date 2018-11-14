@@ -65,7 +65,7 @@
                 $consulta .= ", descripcion_l, stock_proveedor, factor, flete_cliente, flete_proveedor";
                 $consulta .= ", v_cliente, v_proveedor ";
                 $consulta .= "FROM Productos ";
-                $consulta .= "WHERE id =$id";
+                $consulta .= "WHERE id='$id'";
         
                 $resultado = mysql_query($consulta) or print("La consulta en funcion get en el objeto Producto fallo: " . mysql_error());
                 if(@mysql_num_rows($resultado)>=1)

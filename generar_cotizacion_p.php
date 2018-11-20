@@ -1799,7 +1799,7 @@ position: fixed;
             var select = document.getElementById("id_contacto");
             var options=document.getElementsByTagName("option");
             var contacto = select.value;
-
+            
             <?
                 if ($_GET['idcontacto'] != "" )
                 {
@@ -1874,21 +1874,20 @@ position: fixed;
     if ($borrar==1)
     {
        
-        guardarCotizacion();
-        echo "<script>CalcularIva();</script>";
+        
+        echo "<script>CalcularIva2();</script>";
         echo "<script>autoSaveCotizacion();</script>";
+        guardarCotizacion();
         saveCotizacionOnDB();
-        //clearURIVariables();
         echo "<script> window.location = 'generar_cotizacion_p.php'; </script>";
-        //echo "<script>parent.frames['generar_cotizacion_p'].location.reload();</script>";
-        //echo "<script>location.href='generar_cotizacion_p.php?idCotizacionEditar=".$_SESSION['cotizacion']->id."&idVersion=0'</script>";
     }
     //guardar producto agregado y cotizacion nueva.
     //var_dump($_GET['g']);
 
-    $g = $_GET['g'];//id contacto de cambia_producto_especial
-    if ($g == "")
+    $g = $_GET['idcontacto'];//id contacto de cambia_producto_especial
+    if ($g != "")
     {
+       //echo "<script>alert('g');</script>";
         echo "<script>CalcularIva2();</script>";
         echo "<script>autoSaveCotizacion2();</script>";
         guardarCotizacion();
@@ -1899,6 +1898,7 @@ position: fixed;
     //var_dump($_GET['reloadCarritoOnId']);
     if($_GET['reloadCarritoOnId']!='')
     {
+        // echo "<script>alert('carrito');</script>";
         reloadCarrito($_GET['reloadCarritoOnId']);
         clearURIVariables();
         echo "<script>CalcularIva2();</script>";

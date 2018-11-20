@@ -146,7 +146,7 @@ if($_POST['crear']!=""){
         
 //        agregarCarrito($producto);
         unset($_SESSION['cambiaProducto']);
-        echo "<script>window.parent.location = 'agregar_carrito.php?id=$producto->id&cantidad=1&backTo=generar_cotizacion_p.php?g=1';</script>";
+        echo "<script>window.parent.location = 'agregar_carrito.php?id=$producto->id&cantidad=1&backTo=generar_cotizacion_p.php?idcontacto=$idcontacto';</script>";
     }
 }
 

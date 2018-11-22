@@ -18,3 +18,4 @@
     }
 	mysql_select_db("herramie_bluewolf_ag_testing") or print("No pudo seleccionarse la BD.");
 ?>
+

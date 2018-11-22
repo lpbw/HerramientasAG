@@ -1366,8 +1366,8 @@ position: fixed;
                                                                                 //$pr = ( ((1 - $producto->descuento ) * $producto->precio) + ($producto->recargo * $valor_moneda) );
                                                                                 //echo $pr;
                                                                                  //echo $valor_moneda;
-                                                                               //echo getFormatedNumberForMoney(( ($producto->precio / $valor_moneda) + $producto->recargo ));
-                                                                               echo $producto->precio;
+                                                                               echo getFormatedNumberForMoney(( ($producto->precio) + $producto->recargo ));
+                                                                               //echo $producto->precio;
                                                                             }
                                                                             else if($producto->tipo_moneda_usa == $_SESSION['cotizacion']->tipo_moneda)
                                                                             {

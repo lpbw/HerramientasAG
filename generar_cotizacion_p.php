@@ -1366,7 +1366,8 @@ position: fixed;
                                                                                 //$pr = ( ((1 - $producto->descuento ) * $producto->precio) + ($producto->recargo * $valor_moneda) );
                                                                                 //echo $pr;
                                                                                  //echo $valor_moneda;
-                                                                               echo getFormatedNumberForMoney(( ($producto->precio / $valor_moneda) + $producto->recargo ));
+                                                                               //echo getFormatedNumberForMoney(( ($producto->precio / $valor_moneda) + $producto->recargo ));
+                                                                               echo $producto->precio;
                                                                             }
                                                                             else if($producto->tipo_moneda_usa == $_SESSION['cotizacion']->tipo_moneda)
                                                                             {
@@ -1417,14 +1418,14 @@ position: fixed;
                                                             <!-- subtotal -->
                                                             <td >
                                                                 <div align="center"> 
-                                                                    <span name="subtotalView[]" class="texto_info_negro numberTiny" id="subtotalView<? echo $count;?>">
-                                                                        <?
+                                                                    <span name="subtotalView[]" class="texto_info_negro numberTiny" id="subtotalView<? echo $count;?>"><?
                                                                             // var_dump('precio: '.$producto->precio);
                                                                             // var_dump('recargo: '.$producto->recargo);
                                                                             // var_dump('moneda: '.$valor_moneda);
                                                                              // cambio de dolar a pesos
                                                                              if ($producto->tipo_moneda_usa == "1" && $_SESSION['cotizacion']->tipo_moneda == "0") {
                                                                                 echo getFormatedNumberForMoney((((1-($producto->descuento))*$producto->precio)+ ($producto->recargo * $valor_moneda)) * $producto->cantidad);
+                                                                                //echo $producto->precio-$producto->descuento;
                                                                             }
                                                                                 //pesos a dolar
                                                                             else if($producto->tipo_moneda_usa == "0" && $_SESSION['cotizacion']->tipo_moneda == "1")
@@ -1443,25 +1444,24 @@ position: fixed;
                                                                         <? //if($producto->tipo_moneda_usa != $_SESSION['cotizacion']->tipo_moneda){ echo getFormatedNumberForMoney((((1-($producto->descuento))*$producto->precio)+ ($producto->recargo * $valor_moneda)) * $producto->cantidad);}else{echo getFormatedNumberForMoney((((1-($producto->descuento))*$producto->precio)+$producto->recargo) * $producto->cantidad);}
                                                                         ?>
                                                                     </span>
-                                                                    <input <? echo $esLectura;?> name="subtotal[]" type="hidden" class="texto_info_negro numberTiny" id="subtotal<? echo $count;?>" value="
-                                                                    <? 
-                                                                        if ($producto->tipo_moneda_usa == "1" && $_SESSION['cotizacion']->tipo_moneda == "0")
-                                                                        {
-                                                                            // echo getFormatedNumberForMoney((((1-($producto->descuento))*$producto->precio)+ ($producto->recargo * $valor_moneda)) * $producto->cantidad);
-                                                                            echo ((((1-($producto->descuento))*$producto->precio)+ ($producto->recargo * $valor_moneda)) * $producto->cantidad);
-                                                                        }
-                                                                            //pesos a dolar
-                                                                        else if($producto->tipo_moneda_usa == "0" && $_SESSION['cotizacion']->tipo_moneda == "1")
-                                                                        {
-                                                                           echo  ((((1 - $producto->descuento ) * $producto->precio) + ($producto->recargo * $valor_moneda)) * $producto->cantidad);
-                                                                           //echo getFormatedNumberForMoney(( ((1 - $producto->descuento ) * $producto->precio) + ($producto->recargo * $valor_moneda)) * $producto->cantidad);
-                                                                        }
-                                                                        else if($producto->tipo_moneda_usa == $_SESSION['cotizacion']->tipo_moneda)
-                                                                        {
-                                                                            //echo getFormatedNumberForMoney((((1-($producto->descuento))*$producto->precio)+$producto->recargo) * $producto->cantidad);  
-                                                                            echo (((1-($producto->descuento))*$producto->precio)+$producto->recargo) * $producto->cantidad;
-                                                                        }
-                                                                    ?>"/>
+                                                                    <input <? echo $esLectura;?> name="subtotal[]" type="hidden" class="texto_info_negro numberTiny" id="subtotal<? echo $count;?>" value="<? 
+                                                                       // cambio de dolar a pesos
+                                                                             if ($producto->tipo_moneda_usa == "1" && $_SESSION['cotizacion']->tipo_moneda == "0") {
+                                                                                echo getFormatedNumberForMoney((((1-($producto->descuento))*$producto->precio)+ ($producto->recargo * $valor_moneda)) * $producto->cantidad);
+                                                                            }
+                                                                                //pesos a dolar
+                                                                            else if($producto->tipo_moneda_usa == "0" && $_SESSION['cotizacion']->tipo_moneda == "1")
+                                                                            {
+                                                                                //echo $_SESSION['cotizacion']->tipo_moneda;
+                                                                                //$pr = ( ((1 - $producto->descuento ) * $producto->precio) + ($producto->recargo * $valor_moneda) );
+                                                                                //echo $pr;
+                                                                                 //echo $valor_moneda;
+                                                                               echo getFormatedNumberForMoney(( ((1 - $producto->descuento ) * $producto->precio) + ($producto->recargo * $valor_moneda)) * $producto->cantidad);
+                                                                            }
+                                                                            else if($producto->tipo_moneda_usa == $_SESSION['cotizacion']->tipo_moneda)
+                                                                            {
+                                                                                echo getFormatedNumberForMoney((((1-($producto->descuento))*$producto->precio)+$producto->recargo) * $producto->cantidad);
+                                                                            }?>"/>
                                                                 </div>
                                                             </td>
                                                             

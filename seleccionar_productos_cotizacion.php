@@ -9,11 +9,17 @@
     /**
      * idcontacto obtenido de el archivo generar_cotizacion.php
      */
-    $IdContacto = $_GET['idcontacto'];
-
+   
+    if ($_GET['idcontacto']!='') {
+       $IdContacto = $_GET['idcontacto'];
+    }
     if($_REQUEST['buscar']!='' || $_REQUEST['codigo_buscar']!='' || $_REQUEST['familia']!='' || $_REQUEST['proveedor']!='' || $_SESSION['buscadorCotizaciones']['codigo_buscar']!='' || $_SESSION['buscadorCotizaciones']['familia']!='' || $_SESSION['buscadorCotizaciones']['proveedor']!='' || $_REQUEST['submit'])
     {
-        $IdContacto = $_POST['idcontacto'];
+
+        if ($_POST['idcontacto']!='') {
+         $IdContacto = $_POST['idcontacto'];
+        }
+        
         $_SESSION['buscadorCotizaciones']['nombre'] = isset($_POST['nombre']) ? $_POST['nombre'] : $_SESSION['buscadorCotizaciones']['nombre'];
         $_SESSION['buscadorCotizaciones']['familia'] = isset($_POST['familia']) ? $_POST['familia'] : $_SESSION['buscadorCotizaciones']['familia'];
         $_SESSION['buscadorCotizaciones']['proveedor'] = isset($_POST['proveedor']) ? $_POST['proveedor'] : $_SESSION['buscadorCotizaciones']['proveedor'];

@@ -43,6 +43,7 @@
     include_once "checar_permisos.php";
     ini_set("session.cookie_lifetime","3600");
     ini_set("session.gc_maxlifetime","3600");
+    ini_set('max_input_vars', 3000);
     session_start();
     checarAcceso($_SESSION['accesos']['soporte']);
     $valor_moneda = $_SESSION['dollar'];

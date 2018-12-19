@@ -5,7 +5,7 @@ include 'Cotizacion.php';
 session_start();
 include "checar_sesion_admin.php";
 include "coneccion.php";
-
+$idcontacto = $_GET['idcontacto'];
 if($_REQUEST['id']!=""){
 	$producto = new Producto();
         $producto->get($_REQUEST['id']);
@@ -36,7 +36,7 @@ if($_POST["guardar"]=="Guardar"){
 			$id_version_cotizacion)){
 		
         if($_SESSION['cotizacion']->id!=""){
-            ?><script>parent.location = 'generar_cotizacion.php?reloadCarritoOnId=<? echo $producto->id;?>';</script><?
+            ?><script>parent.location = 'generar_cotizacion_p.php?reloadCarritoOnId=<? echo $producto->id;?>&flag=0&idcontacto=$idcontacto';</script><?
             
         } else {
             ?><script>parent.location.reload();</script><?

@@ -5,21 +5,10 @@
     include_once "checar_sesion_admin.php";
     include_once "coneccion.php";
     session_start();
-
-    /**
-     * idcontacto obtenido de el archivo generar_cotizacion.php
-     */
-   
-    if ($_GET['idcontacto']!='') {
-       $IdContacto = $_GET['idcontacto'];
-    }
+    $idcontacto = $_GET['idcontacto'];
+    //var_dump($idcontacto);
     if($_REQUEST['buscar']!='' || $_REQUEST['codigo_buscar']!='' || $_REQUEST['familia']!='' || $_REQUEST['proveedor']!='' || $_SESSION['buscadorCotizaciones']['codigo_buscar']!='' || $_SESSION['buscadorCotizaciones']['familia']!='' || $_SESSION['buscadorCotizaciones']['proveedor']!='' || $_REQUEST['submit'])
     {
-
-        if ($_POST['idcontacto']!='') {
-         $IdContacto = $_POST['idcontacto'];
-        }
-        
         $_SESSION['buscadorCotizaciones']['nombre'] = isset($_POST['nombre']) ? $_POST['nombre'] : $_SESSION['buscadorCotizaciones']['nombre'];
         $_SESSION['buscadorCotizaciones']['familia'] = isset($_POST['familia']) ? $_POST['familia'] : $_SESSION['buscadorCotizaciones']['familia'];
         $_SESSION['buscadorCotizaciones']['proveedor'] = isset($_POST['proveedor']) ? $_POST['proveedor'] : $_SESSION['buscadorCotizaciones']['proveedor'];
@@ -317,15 +306,13 @@
                         <td class="texto_info_negro">&nbsp;</td>
                         <td align="center"><span class="style9">
                           <input name="buscar" type="submit" class="texto_info_negro" id="buscar" value="Buscar" />
-                        </span>
-                        <input type="hidden" name="idcontacto" id="idcontacto" value="<? echo $IdContacto;?>">
-                        </td>
+                        </span></td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                       </tr>
                       <tr>
                         <td colspan="4" align="right" class="texto_info_negro"><span class="style6">
-                          <input name="comprar" type="button" class="texto_info" id="comprar" onclick="window.location = 'generar_cotizacion_p.php?g=1&idcontacto=<? echo $IdContacto;?>'" value="Aceptar" />
+                          <input name="comprar" type="button" class="texto_info" id="comprar" onclick="window.location = 'generar_cotizacion_p.php?g=1&idcontacto=<?echo  $idcontacto?>'" value="Aceptar" />
                         </span></td>
                       </tr>
                     </table></td>

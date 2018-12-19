@@ -138,13 +138,6 @@
         saveCotizacionOnDB();
     }
 
-
-    $Cambio = $_GET['Cambia'];
-    if ($Cambio==1) 
-    {
-        reloadCarrito($_GET['reloadCarritoOnId']);
-    }
-
     if($_POST['posicion_borrar']!="")
     {
         $Contacto = $_POST['id_contacto'];
@@ -185,7 +178,7 @@
         $id_modificar_producto = $_POST['id_modificar_producto'];
         guardarCotizacion();
         saveCotizacionOnDB();
-       
+        
         if($_POST['id_proveedor'] == 8) 
         {
             $modificarProductoBox = "cambia_producto_especial.php?id=$id_modificar_producto";
@@ -216,17 +209,6 @@
     {
         $location = explode('?',$_SERVER['REQUEST_URI']);
         echo "<script> window.location = '<? echo $location[0];?>'; </script>";
-    }
-
-    function clearURIVariables1()
-    {
-        $location = explode('?',$_SERVER['REQUEST_URI']);
-        //echo "<script>alert('$location[0]');</script>";
-        //$D = $location[0];
-        //echo "<script>alert('$D');</script>";
-        //$U = explode("/", $D);
-        //echo "<script>alert('$U[2]');</script>";
-        echo "<script> window.location = '$location[0]'; </script>";
     }
 
     if(isset($_REQUEST['agregarProductoPorCodigo']))
@@ -352,7 +334,7 @@ body {
 .imgIco{margin-bottom: 10px;}
 
 .rotateButton{
-top: 5.5em;
+	top: 5.5em;
 width: 4em;
 right: -.5em;
 position: fixed;
@@ -1245,7 +1227,6 @@ position: fixed;
                                                     $color = "";
                                                     foreach ($_SESSION['cotizacion'] -> productos as $n => $producto)
                                                     {
-                                                        $idcontacto =$_SESSION['cotizacion']->id_contacto;
                                             ?>	
                                                         <tr class="texto_info_negro_c" bgcolor="<? echo $color;?>">
                                                             <!-- borrar producto -->
@@ -1309,7 +1290,7 @@ position: fixed;
                                                                         else 
                                                                         { 
                                                                     ?>
-                                                                            <a href="<? echo $producto->id_proveedor == 8 ? "cambia_producto_especial.php" : "cambia_producto.php";	echo "?id=$producto->id&idcontacto=$idcontacto";?>" onClick="" class="texto_info_negro_c iframe" style="line-height: 1;"> 
+                                                                            <a href="<? echo $producto->id_proveedor == 8 ? "cambia_producto_especial.php" : "cambia_producto.php";	echo "?id=$producto->id";?>" onClick="" class="texto_info_negro_c iframe" style="line-height: 1;"> 
                                                                                 <? echo $_SESSION['cotizacion'] ->idioma == 'ESP' ? "$producto->nombre ($producto->codigo_interno)":"$producto->descripcion ($producto->codigo_interno)"; ?> 
                                                                             </a>
                                                                     <? 
@@ -1336,7 +1317,7 @@ position: fixed;
                                                             <!-- cantidad -->
                                                             <td >
                                                                 <div align="center">
-                                                                    <input <? echo $esLectura;?> name="cantidad<? echo $n;?>" type="text" class="texto_info_negro numberTiny" id="cantidad<? echo $count?>" onChange="if(checkIfNumber(this)){checkDescuento(<? echo $count;?>);setViewCurrency('subtotal<? echo $count;?>','subtotalView<? echo $count;?>'); CalcularIva()}" value="<? echo $producto->cantidad;?>" size="5" maxlength="5" />
+                                                                    <input <? echo $esLectura;?> name="cantidad<? echo $n;?>" type="text" class="texto_info_negro numberTiny" id="cantidad<? echo $count?>" onChange="if(checkIfNumber(this)){checkDescuento(<? echo $count;?>);setViewCurrency('subtotal<? echo $count;?>','subtotalView<? echo $count;?>'); setViewCurrency('precio_unitario_v<? echo $count;?>','precioVenta<? echo $count;?>');CalcularIva()}" value="<? echo $producto->cantidad;?>" size="5" maxlength="5" />
                                                                 </div>
                                                             </td>
                                                             
@@ -1429,7 +1410,7 @@ position: fixed;
                                                             <!-- descuento-->
                                                             <td>
                                                                 <div align="center">
-                                                                    <input <? echo $esLectura;?> name="descuento<? echo $n;?>" type="number" class="texto_info_negro numberTiny" onChange="checkDescuento(<? echo $count;?>);setViewCurrency('subtotal<? echo $count;?>','subtotalView<? echo $count;?>'); CalcularIva();" id="descuento<? echo $count?>" value="<? echo $producto->descuento*100;?>" size="6" maxlength="3" style="width:40px"/>
+                                                                    <input <? echo $esLectura;?> name="descuento<? echo $n;?>" type="number" class="texto_info_negro numberTiny" onChange="checkDescuento(<? echo $count;?>);setViewCurrency('subtotal<? echo $count;?>','subtotalView<? echo $count;?>'); setViewCurrency('precio_unitario_v<? echo $count;?>','precioVenta<? echo $count;?>');CalcularIva();" id="descuento<? echo $count?>" value="<? echo $producto->descuento*100;?>" size="6" maxlength="3" style="width:40px"/>
                                                                     <input <? echo $esLectura;?> name="recargo[]" type="hidden" class="texto_info_negro numberTiny" id="recargo<? echo $count?>" value="<? if($producto->tipo_moneda_usa != $_SESSION['cotizacion']->tipo_moneda){ echo  ($producto->recargo * $valor_moneda);}else{ echo  $producto->recargo;}?>"/>
                                                                 </div>
                                                             </td>
@@ -1915,7 +1896,7 @@ position: fixed;
     }
     //
     //var_dump($_GET['reloadCarritoOnId']);
-    if($_GET['reloadCarritoOnId']!=''&&$Cambio!=1)
+    if($_GET['reloadCarritoOnId']!='')
     {
         // echo "<script>alert('carrito');</script>";
         reloadCarrito($_GET['reloadCarritoOnId']);
@@ -1923,16 +1904,5 @@ position: fixed;
         echo "<script>CalcularIva2();</script>";
         echo "<script>autoSaveCotizacion2();</script>";
         guardarCotizacion();
-        //clearURIVariables();
-    }
-
-    if ($Cambio==1) 
-    {
-        //reloadCarrito($_GET['reloadCarritoOnId']);
-        echo "<script>CalcularIva();</script>";
-        echo "<script>autoSaveCotizacion2();</script>";
-        guardarCotizacion();
-        //echo "<script>location = 'generar_cotizacion_p.php';</script>";
-        //clearURIVariables1();
     }
 ?>

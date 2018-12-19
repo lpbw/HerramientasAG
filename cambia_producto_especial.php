@@ -13,11 +13,10 @@
     /*
     *PERMISOS DE ESCRITURA TIENEN: Administrador, Supervisor y Compras
     */
-
-   $idcontacto = $_GET['idcontacto'];//recibido de generar_cotizacion_p
-
+   
 $vistaLectura = !tienePermisoEscritura($_SESSION['accesos']['administrador'],$_SESSION['accesos']['supervisor'],$_SESSION['accesos']['compras'],$_SESSION['accesos']['vendedor25'],$_SESSION['accesos']['soporte'],$_SESSION['accesos']['vendedor']);
-
+$idcontacto = $_GET['idcontacto'];
+//var_dump($idcontacto);
 /*
  * Variable para poner en modo lectura o escritura
  */
@@ -91,13 +90,13 @@ if($guardar == "Guardar"){
         
 		
         unset($_SESSION['cambiaProducto']);
-        
+        $idcontacto = $_GET['idcontacto'];
         $mystring = $_POST['from'];
         $findme   = 'generar_cotizacion_p.php';
         $pos = strpos($mystring, $findme);
         if( $pos === false ){
            //echo "<script>parent.location.reload();</script>";
-           echo "<script>parent.location = 'generar_cotizacion_p.php?g=1';</script>";
+           echo "<script>parent.location = 'generar_cotizacion_p.php?g=2&idcontacto=$idcontacto';</script>";
           //echo "<script>parent.location = 'generar_cotizacion_p.php?reloadCarritoOnId=$producto->id';</script>";
         } else {
           echo "<script>parent.location.reload();</script>";
@@ -139,14 +138,29 @@ if($_POST['crear']!=""){
      */
     $producto = new Producto();
 	
-	if($producto->create($nombre,$id_catalogo_productos,$precio, $costo, $id_proveedor, $actualizado_en_microsip,$_FILES['archivo_ficha_tecnica']['name'],$_FILES['imagen']['name'],$descripcion,$codigo,$codigo_familia,$codigo_microsip,$numero_consecutivo,$unidad_metrica, $unidad_metrica_ingles,$origen,$tipo_moneda_usa,$codigo_descuento,$stock,$exportar_microsip,$existencia,$codigo_interno, $recargo=0,$descripcion_l, $peso, $stock_fabrica, $tienda, $stock_proveedor, $factor, $flete_cliente, $flete_proveedor, $_POST['v_cliente'],$_POST['v_proveedor']))
+	if($producto->create($nombre,$id_catalogo_productos,$precio, $costo, $id_proveedor, $actualizado_en_microsip,$_FILES['archivo_ficha_tecnica']['name'],$_FILES['imagen']['name'],$descripcion,$codigo,$codigo_familia,$codigo_microsip,$numero_consecutivo,$unidad_metrica, $unidad_metrica_ingles,$origen,$tipo_moneda_usa,$codigo_descuento,$stock,$exportar_microsip,$existencia,$codigo_interno, $recargo=0,$descripcion_l, $peso, $stock_fabrica, $tienda, $stock_proveedor, $factor, $flete_cliente, $flete_proveedor, $_POST['v_cliente'],$_POST['v_proveedor'])
+	)
+	
+   /* if( $producto->create($nombre,$id_catalogo_productos,
+            $precio, $costo, $id_proveedor, $actualizado_en_microsip,
+            $_FILES['archivo_ficha_tecnica']['name'],
+            $_FILES['imagen']['name'],$descripcion,
+            $codigo_microsip,$codigo_familia,
+            $exportar_microsip, $stock, 
+            $codigo_descuento, $tipo_moneda_usa,
+            $unidad_metrica, $unidad_metrica_ingles,'0','0','0','0', '0', '0', $factor, $flete_cliente, $flete_proveedor, $_POST['v_cliente'], $_POST['v_proveedor'])
+            )*/
     {
         
         $producto->cantidad = "1";
-        
+		
 //        agregarCarrito($producto);
         unset($_SESSION['cambiaProducto']);
-        echo "<script>window.parent.location = 'agregar_carrito.php?id=$producto->id&cantidad=1&backTo=generar_cotizacion_p.php?idcontacto=$idcontacto';</script>";
+        
+//        if($_SESSION['cotizacion']->update( $_SESSION['cotizacion'] ) ){
+        ?><script>window.parent.location = 'agregar_carrito.php?id=<?echo $producto->id;?>&cantidad=1&backTo=generar_cotizacion_p.php?idcontacto=<? echo $idcontacto?>';</script><?
+            ?><script>//parent.location.reload();</script><?
+//        }
     }
 }
 

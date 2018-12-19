@@ -1,112 +1,88 @@
 <?
-    session_start();
-    include_once "getFormatedNumberForMoney.php";
-    $valor_moneda = $_SESSION['dollar'];
-    function getRutaMail()
-    {
-        return "http://www.herramientasag.com.mx/cotizador_test/";
-    }
+session_start();
+include_once "getFormatedNumberForMoney.php";
+$valor_moneda = $_SESSION['dollar'];
+function getRutaMail(){return "http://www.herramientasag.com.mx/cotizador/";}
 
-    function getBodyCotizacion($cotizacion, $productos , $cliente , $esParaCliente,$sinCodigos = TRUE)
-    {
-        //$productos viene vacio
-        $query="SELECT nombre FROM Usuarios where id=".$cotizacion->id_usuario_ultima_modificacion;
-        $resultado=mysql_query($query)or die ("Error al consultar vendedor".mysql_error());
-        $re=mysql_fetch_row($resultado);
-        $usuario=$re[0];
+function getBodyCotizacion($cotizacion, $productos , $cliente , $esParaCliente,$sinCodigos = TRUE){
+//    $productos viene vacio
+	$query="SELECT nombre FROM Usuarios where id=".$cotizacion->id_usuario_ultima_modificacion;
+	$resultado=mysql_query($query)or die ("Error al consultar vendedor".mysql_error());
+	$re=mysql_fetch_row($resultado);
+	$usuario=$re[0];
 					
-	    $ruta=getRutaMail();
-        if($esParaCliente)
-        {
-            $mensajeBienvenida = "Gracias por contactarnos, esta es la cotizacion que nos has solicitado. <br>";
-            $mensajeBienvenida .= "Sí deseas hacer alguna aclaración estamos a tus órdenes. <br>";
-            $mensajeBienvenida .= "Atte: Herramientas AG <br>";
-            $mensajeBienvenida .= "Tel: 614 1 234 567<br>";
-            $mensajeBienvenida .= "Fax: 614 4 567 890";
-        }
-        else
-        {
-            $mensajeBienvenida= "<h2>Cliente <b>".  $cliente->nombre_contacto."</b></h2>$cliente->email_contacto";
+	$ruta=getRutaMail();
+    if($esParaCliente){
+        $mensajeBienvenida = "Gracias por contactarnos, esta es la cotizacion que nos has solicitado.<br>
+            Sí deseas hacer alguna aclaración estamos a tus órdenes.<br>
+            Atte: Herramientas AG<br>
+            Tel: 614 1 234 567<br>
+            Fax: 614 4 567 890
+            ";
+    } else $mensajeBienvenida= "<h2>Cliente <b>".  $cliente->nombre_contacto."</b></h2>
+            $cliente->email_contacto";
+    $rows="";
+    $color ="#CCCCCC";
+    $cuantos=1;
+	if($cotizacion->tipo_moneda=="0")
+	{
+		$tipo_moneda="M.N.";
+		$moneda="pesos";
+	}
+	else
+	{
+		$tipo_moneda="USD";
+		$moneda="dolares";
+	}
+    foreach ($productos as $n => $producto) {
+        if($color!="#CCCCCC")
+            $color="#CCCCCC";
+        else $color="";
+        
+        if($cotizacion->idioma == 'ESP'){
+            $nombre = $producto->nombre;
+        } else {
+            $nombre = $producto->descripcion;
         }
         
-        $rows="";
-        $color ="#CCCCCC";
-        $cuantos=1;
-        if($cotizacion->tipo_moneda=="0")
-        {
-            $tipo_moneda="M.N.";
-            $moneda="pesos";
-        }
-        else
-        {
-            $tipo_moneda="USD";
-            $moneda="dolares";
-        }
-        foreach ($productos as $n => $producto)
-        {
-            if($color!="#CCCCCC")
-            {
-                $color="#CCCCCC";
-            }   
-            else
-            {
-                $color="";
-            } 
-        
-            if($cotizacion->idioma == 'ESP')
-            {
-                $nombre = $producto->nombre;
-            }
-            else
-            {
-                $nombre = $producto->descripcion;
-            }
-        
-            //if(!$sinCodigos)
+//        if(!$sinCodigos)
             $nombre.=  " ($producto->codigo_interno)";
         
-            if($producto->comentario!="")
-            {
-                $extra="(".$producto->comentario.")<br>";
-            }  
-            else
-            {
-                $extra="";
-            }
-            
-            $extra=str_replace("\n","<br>",$extra);
-            if($producto->imagen!="")
-            {
-                $imagen=$producto->imagen;
-                $widthRowImage = "92px";
-            }
-            else
-            {
-                $imagen="archivos/spacer.gif";        
-                $widthRowImage = "1px";
-            }
-            list($rut, $arch) = explode('/', $imagen);
-            if($producto->tipo_moneda_usa != $_SESSION['cotizacion']->tipo_moneda)
-            {
-				$precio_n=getFormatedNumberForMoney(( ((1 - $producto->descuento ) * $producto->precio) + ($producto->recargo * $_SESSION['dollar']) ) );
-				$total_n=getFormatedNumberForMoney((((1-($producto->descuento))*$producto->precio)+ ($producto->recargo * $_SESSION['dollar'])) * $producto->cantidad);
-            }
-            else
-            {
-				$precio_n=getFormatedNumberForMoney(( ((1 - $producto->descuento ) * $producto->precio) + $producto->recargo ) );
-				$total_n=getFormatedNumberForMoney((((1-($producto->descuento))*$producto->precio)+$producto->recargo) * $producto->cantidad);
-			}      
-            $rows .= "<tr>";
-            $rows .= "<td valign=\"top\" class=\"texto_info_negro_cMail\"><div align=\"center\">$producto->partida</div></td>";
-            $rows .= "<td valign=\"top\" class=\"texto_info_negro_cMail\" width=\"$widthRowImage\"><div align=\"center\"><img src=\"".$ruta."archivos/ch_".$arch."\"  /></div></td>";
-            $rows .= "<td valign=\"top\" class=\"texto_info_negro_cMail\"><div align=\"left\">". $nombre ."<br> ".stripslashes($extra)."</div></td>";
-            $rows .= "<td valign=\"top\" class=\"texto_info_negro_cMail\"><div align=\"center\">$producto->cantidad $producto->unidad_metrica</div></td>";
-            $rows .= "<td valign=\"top\" class=\"texto_info_negro_cMail\"><div align=\"right\">$".$precio_n."</div></td>";
-            $rows .= "<td valign=\"top\" class=\"texto_info_negro_cMail\"><div align=\"right\">$".$total_n."</div></td>";											  
-            $rows .= "</tr>";
-            $cuantos++;
+        if($producto->comentario!="")
+            $extra="(".$producto->comentario.")<br>";
+        else
+            $extra="";
+        
+        $extra=str_replace("\n","<br>",$extra);
+        if($producto->imagen!=""){
+            $imagen=$producto->imagen;
+            $widthRowImage = "92px";
+        }else{
+            $imagen="archivos/spacer.gif";        
+            $widthRowImage = "1px";
         }
-        $body = "<html>
+        list($rut, $arch) = explode('/', $imagen);
+          			if($producto->tipo_moneda_usa != $_SESSION['cotizacion']->tipo_moneda){
+					$precio_n=getFormatedNumberForMoney(( ((1 - $producto->descuento ) * $producto->precio) + ($producto->recargo * $_SESSION['dollar']) ) );
+					$total_n=getFormatedNumberForMoney((((1-($producto->descuento))*$producto->precio)+ ($producto->recargo * $_SESSION['dollar'])) * $producto->cantidad);
+					}else{
+					$precio_n=getFormatedNumberForMoney(( ((1 - $producto->descuento ) * $producto->precio) + $producto->recargo ) );
+					$total_n=getFormatedNumberForMoney((((1-($producto->descuento))*$producto->precio)+$producto->recargo) * $producto->cantidad);
+					}      
+        $rows .= "
+            <tr>
+                    <td valign=\"top\" class=\"texto_info_negro_cMail\"><div align=\"center\">$producto->partida</div></td>
+                    <td valign=\"top\" class=\"texto_info_negro_cMail\" width=\"$widthRowImage\"><div align=\"center\"><img src=\"".$ruta."archivos/ch_".$arch."\"  /></div></td>
+                    <td valign=\"top\" class=\"texto_info_negro_cMail\"><div align=\"left\">". $nombre ."<br> ".stripslashes($extra)."</div></td>
+                    <td valign=\"top\" class=\"texto_info_negro_cMail\"><div align=\"center\">$producto->cantidad $producto->unidad_metrica</div></td>
+                    <td valign=\"top\" class=\"texto_info_negro_cMail\"><div align=\"right\">$".$precio_n."</div></td>
+                    <td valign=\"top\" class=\"texto_info_negro_cMail\"><div align=\"right\">$".$total_n."</div></td> 												  
+            </tr>
+            ";
+        $cuantos++;
+    }
+    $body = "
+<html>
 <head>
 <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />
 <title>Cotización</title>

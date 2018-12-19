@@ -65,7 +65,7 @@
                 $consulta .= ", descripcion_l, stock_proveedor, factor, flete_cliente, flete_proveedor";
                 $consulta .= ", v_cliente, v_proveedor ";
                 $consulta .= "FROM Productos ";
-                $consulta .= "WHERE id='$id'";
+                $consulta .= "WHERE id =$id";
         
                 $resultado = mysql_query($consulta) or print("La consulta en funcion get en el objeto Producto fallo: " . mysql_error());
                 if(@mysql_num_rows($resultado)>=1)
@@ -118,30 +118,10 @@
     
         public function update($nombre,$id,$id_catalogo_productos,$precio,$costo,$id_proveedor,$modificado,$archivo_ficha_tecnica,$imagen,$descripcion, $codigo_familia, $unidad_metrica, $exportar_microsip=0, $stock="", $codigo_descuento="", $tipo_moneda_usa="",$unidad_metrica_ingles="", $recargo=0,$esProductoEspecial = FALSE, $peso, $stock_fabrica, $tienda,$descripcion_l, $stock_proveedor, $factor, $flete_cliente, $flete_proveedor, $v_cliente, $v_proveedor)
         {
-             //Nombre en espaniol.
             $nombre = strtoupper($nombre);
             $nombre1 = addslashes($nombre);
-            //Nombre en ingles.
             $descripcion = strtoupper($descripcion);
             $descripcion1 = addslashes($descripcion);
-            //Descripcion larga.
-            $descripcion_l = strtoupper($descripcion_l);
-            $descripcion_l = addslashes($descripcion_l);
-            //Ruta archivo de ficha tecnica.
-            $archivo_ficha_tecnica = addslashes($archivo_ficha_tecnica);
-            //Ruta imagen.
-            $imagen = addslashes($imagen);
-            //Codigo microsip
-            $codigo_microsip = addslashes($codigo_microsip);
-            //Codigo
-            $codigo = addslashes($codigo);
-            //unidad metrica.
-            $unidad_metrica = addslashes($unidad_metrica);
-            //unidad metrica ingles.
-            $unidad_metrica_ingles = addslashes($unidad_metrica_ingles);
-            //codigo descuento.
-            $codigo_descuento = addslashes($codigo_descuento);
-
             if($imagen!="")
             {
                 $imagen = "imagen = '".$this->resizeImageAndUpload('imagenProducto_'.$this->id,'archivos','imagen',400)."',";
@@ -238,31 +218,11 @@
         */
         public function create($nombre,$id_catalogo_productos,$precio,$costo,$id_proveedor,$modificado,$archivo_ficha_tecnica,$imagen,$descripcion,$codigo, $codigo_familia,$codigo_microsip,$numero_consecutivo='',$unidad_metrica,$unidad_metrica_ingles,$origen,$tipo_moneda_usa, $codigo_descuento,$stock,$exportar_microsip=0,$existencia='',$codigo_interno='',$recargo=0,$descripcion_l, $peso, $stock_fabrica, $tienda, $stock_proveedor, $factor, $flete_cliente, $flete_proveedor, $v_cliente, $v_proveedor)
         {
-          
-            //Nombre en espaniol.
             $nombre = strtoupper($nombre);
             $nombre1 = addslashes($nombre);
-            //Nombre en ingles.
             $descripcion = strtoupper($descripcion);
             $descripcion1 = addslashes($descripcion);
-            //Descripcion larga.
-            $descripcion_l = strtoupper($descripcion_l);
-            $descripcion_l = addslashes($descripcion_l);
-            //Ruta archivo de ficha tecnica.
-            $archivo_ficha_tecnica = addslashes($archivo_ficha_tecnica);
-            //Ruta imagen.
-            $imagen = addslashes($imagen);
-            //Codigo microsip
-            $codigo_microsip = addslashes($codigo_microsip);
-            //Codigo
-            $codigo = addslashes($codigo);
-            //unidad metrica.
-            $unidad_metrica = addslashes($unidad_metrica);
-            //unidad metrica ingles.
-            $unidad_metrica_ingles = addslashes($unidad_metrica_ingles);
-            //codigo descuento.
-            $codigo_descuento = addslashes($codigo_descuento);
-            
+        
             $consulta = "INSERT INTO Productos(nombre,id_catalogo_productos,precio,costo,id_proveedor,";
 			$consulta .= "modificado,archivo_ficha_tecnica,imagen,descripcion,codigo,codigo_familia,codigo_microsip,";
 			$consulta .= "numero_consecutivo,unidad_metrica,unidad_metrica_ingles,origen,tipo_moneda_usa,codigo_descuento,stock,";
@@ -521,11 +481,6 @@
             {
                 return FALSE;
             }
-        }
-
-        public function UpdateProductoCotizacion($Atributo,$Valor,$IdPCotizacion)
-        {
-
         }
 }
 ?>

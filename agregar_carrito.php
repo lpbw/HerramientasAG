@@ -18,9 +18,6 @@
     if ($_GET['cantidad']!="") {
         $cant = $_GET['cantidad'];
     }
-    if ($_GET['contacto']!="") {
-        $Idcontacto = $_GET['contcato'];
-    }
     
     /*
     * LOS PRODUCTOS QUE ESTÁN EN LA COTIZACIÓN Y CARRITO GUARDAN EN PRECIO

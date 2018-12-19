@@ -3,13 +3,16 @@ include_once 'Usuario.php';
 include_once 'Producto.php';
 include_once 'Cotizacion.php';
 include_once 'Contacto.php';
+session_start();
 include_once "checar_sesion_admin.php";
 include_once "coneccion.php";
-session_start();
+//print_r($contacto);
+
+//print_r($_REQUEST);
+
 $id_cliente=$_GET['id_cliente'];
 
-if($_POST['crear']!="")
-{
+if($_POST['crear']!=""){
     $nombre_contacto = $_POST['nombre_contacto']; 
     $email_contacto = $_POST['email_contacto'];
     $telefono_contacto = $_POST['telefono_contacto'];
@@ -19,15 +22,16 @@ if($_POST['crear']!="")
 	
     $contacto = new Contacto();
     
-    if($contacto->create($id_cliente,$nombre_contacto, $email_contacto, $telefono_contacto,$contrasenia, $departamento_empresa, $es_comprador))
-    {	
+    if($contacto->create($id_cliente,
+            $nombre_contacto, $email_contacto, $telefono_contacto, 
+            $contrasenia, $departamento_empresa, $es_comprador)
+            ){
+		
         unset($_SESSION['cambiaContacto']);
-        echo "<script>parent.cerrarV();</script>";
-    } 
-    else
-    {
-        echo "<script>alert('Creacion no exitosa');</script>";
-        echo "<script>parent.cerrarV();</script>";
+        ?><script>parent.cerrarV();</script><?
+    } else {
+        ?><script>alert('Creacion no exitosa');</script><?        
+		?><script>parent.cerrarV();</script><?
 	}
 }
 
@@ -44,17 +48,18 @@ if($_POST['crear']!="")
 		<script type="text/javascript" src="js/jquery-ui-1.8.16.custom.min.js"></script>
 
 <style type="text/css">
+<!--
 .style6 {color: #FFFFFF}
-.numberTiny 
-{
+
+.numberTiny {
 	width: 60px;
 	text-align: center;
 }
-.numberMedium
-{
+.numberMedium{
 	width: 80px;
 	text-align: center;
 }
+-->
 </style>
 <script>
 	function validar(){
@@ -162,7 +167,8 @@ if($_POST['crear']!="")
    <table width="450" border="0" align="center">
     <tr>
       <td class="style8"><div align="center">
-        <input name="crear" type="submit" class="texto_info" onClick="return validar()" value="Guardar"/>
+        <input name="crear" type="submit" class="texto_info" 
+               onClick="return validar()" value="Guardar"/>
       </div></td>
     </tr>
   </table>

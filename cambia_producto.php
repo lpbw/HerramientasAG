@@ -7,9 +7,9 @@
     include_once "checar_acceso.php";
     include_once "checar_permisos.php";
     session_start();
-    $idcontacto=$_GET['idcontacto'];
+    /*$id_usu=$_SESSION['usuario'];
 
-    //echo "<script>alert('$idcontacto');</script>";
+    echo "<script>alert('$id_usu');</script>";*/
     setAccesoIndividual($_SESSION['accesos']['vendedor'],$_SESSION['accesos']['administrador'],$_SESSION['accesos']['supervisor'],$_SESSION['accesos']['vendedor25'],$_SESSION['accesos']['compras']);
 
     checarAcceso($_SESSION['accesos']['mostrador']);
@@ -185,21 +185,16 @@
                 $pos = strpos($_POST['from'], 'generar_cotizacion.php');
                 if($_REQUEST['from']=="adm_revision_cambios_productos.php")
                 { 
-                    //echo "<script>alert('1');</script>";
                     echo "<script>parent.document.getElementById('no_aprobar_'".$producto->id.$_REQUEST['atributo']."').checked = true;</script>";
                     echo "<script>parent.cerrarV();</script>";
                 } 
                 else if( $pos === false )
                 {
-                    //echo "<script>alert('2');</script>";
-                    echo "<script>parent.location = 'generar_cotizacion_p.php?reloadCarritoOnId=$producto->id&Cambia=1&idcontacto=$idcontacto';</script>";
-                    //echo "<script>parent.location.reload();</script>";
-                    //echo "<script>parent.cerrarV();</script>";
+                    echo "<script>parent.location.reload();</script>";
                 } 
                 else
                 {
-                   // echo "<script>alert('3');</script>";
-                    echo "<script>parent.location = 'generar_cotizacion_p.php?reloadCarritoOnId=$producto->id&Cambia=1&idcontacto=$idcontacto';</script>";
+                    echo "<script>parent.location = 'generar_cotizacion.php?reloadCarritoOnId=$producto->id';</script>";
                 }
             }
         }

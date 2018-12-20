@@ -54,7 +54,14 @@
         $esLectura = "disabled";
     } 
     
-   
+    //se hace en la funcion SaveNew()
+   /*if(isset($_POST['guardarCotizacionYNuevo']))
+    {
+        unset($_SESSION['cotizacion']);
+        unset($_SESSION['carrito']);
+        echo "<script> window.location.href'generar_cotizacion_p.php'; </script>";
+    }*/
+
     /*
      * Editar cotizacion y eliminar cotizacion
      * Editar recibe por POST idCotizacionEditar,id_version,limitInicio
@@ -140,7 +147,8 @@
         saveCotizacionOnDB();
     }
 
-    if($_POST['posicion_borrar']!="")
+    //se hace en la funcion BorrarProducto
+   /* if($_POST['posicion_borrar']!="")
     {
         $Contacto = $_POST['id_contacto'];
         $_GET['idcontacto']=$Contacto;
@@ -163,7 +171,7 @@
        
         //saveCotizacionOnDB();
         
-    }
+    }*/
 
     if($_POST['posicion_borrar_archivo']!="")
     {
@@ -192,20 +200,16 @@
         echo $modificarProductoBox;
     }
 
-    if( $_POST['previsualizar']!="")
+    //esto se hace en la funcion validar.
+    /*if( $_POST['previsualizar']!="")
     {
         if( $_POST['previsualizar']!="" )
         {
             echo"<script>window.open(\"precotizacion.php\");</script>";
         }   
-    }
+    }*/
 
-    if(isset($_POST['guardarCotizacionYNuevo']))
-    {
-        unset($_SESSION['cotizacion']);
-        unset($_SESSION['carrito']);
-        echo "<script> window.location.'generar_cotizacion_p.php'; </script>";
-    }
+   
 
     function clearURIVariables()
     {
@@ -359,8 +363,7 @@ textarea{resize:none;}
 <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 <script src="ajaxSubmit.js"></script> 
 <script src="colorbox/jquery.colorbox-min.js"></script>
- 
-<script>
+ <script>
 
 $(document).ready(function(){
                 //Examples of how to assign the ColorBox event to elements
@@ -596,13 +599,15 @@ function agregarIva(obj){
     form.submit();
 }*/
 
-    function SaveIva(coniva){
+    function SaveIva(){
+        var coniva;
         var total = 0;
         var subtotal = 0;
         var iva = 0;
         var total2=0;
         //Validar si iva esta seleccionado.
-        if (coniva.checked==true) {
+        if ($('#conIva').attr('checked')) {
+            coniva="true";
             //validar que tengan productos.
             if ($('#count')!=0){
                 var count = parseInt($('#count').val())-1;
@@ -623,6 +628,7 @@ function agregarIva(obj){
             }
         }
         else{
+            coniva="false";
            if ($('#count')!=0){
                 var count = parseInt($('#count').val())-1;
                 for (i = 1; i <= count; i++){
@@ -644,7 +650,7 @@ function agregarIva(obj){
             "subtotal":total,
             "total":total2,
             "iva":iva,
-            "con_iva":coniva.checked,
+            "con_iva":coniva,
             "id_prioridad":$('#id_prioridad').val(),
             "id_estatus":$('#id_estatus').val(),
             "id_cliente":$('#id_cliente').val(),
@@ -666,13 +672,94 @@ function agregarIva(obj){
 
             },
             success: function(response){
-                alert(response);
+                //alert(response);
             }
         });
 
     }
 
-function validar(){
+
+    //Actualizar producto.
+    function ActualizarProducto(id,cotizacion,producto)
+    {
+        var precio = $('#precio_unitario'+id).val();
+        var cantidad = $('#cantidad'+id).val();
+        var recargo = $('#recargo'+id).val();
+        var comentario = $('#comentarioProducto'+id).val();
+        var descuento = $('#descuento'+id).val();
+        var param={
+            "precio":precio,
+            "cantidad":cantidad,
+            "recargo":recargo,
+            "comentario":comentario,
+            "descuento":descuento,
+            "id_producto":producto,
+            "partida":id,
+            "id_cotizacion":cotizacion
+        };
+        $.ajax({
+            data: param,
+            url: 'SaveProducto.php',
+            type: 'post',
+            beforeSend: function(){
+
+            },
+            success: function(response){
+                //alert(response);
+            }
+        });
+        SaveIva();
+    }
+
+    //guardar cotizacion.
+    function SaveCotizacion(){
+        SaveIva();
+        alert("Cotizacion guardada");
+    }
+
+    //guardar y generar nueva cotizacion.
+    function SaveNew(){
+        SaveIva();
+        $.ajax({
+            url: 'Nuevacotizacion.php',
+            type: 'post',
+            beforeSend: function(){
+
+            },
+            success: function(response){
+                window.location.href='generar_cotizacion_p.php';
+            }
+        });  
+    }
+
+    //generar pdf.
+    function GenerarPDF(){
+       window.open("GenerarPDF.php");
+       
+    }
+
+    function BorrarProducto(id,cotizacion,producto)
+    {
+        var param={
+            "id_producto":producto,
+            "partida":id,
+            "id_cotizacion":cotizacion
+        };
+        $.ajax({
+            data: param,
+            url: 'BorrarProducto.php',
+            type: 'post',
+            beforeSend: function(){
+
+            },
+            success: function(response){
+                //alert(response);
+                location.reload();
+            }
+        });
+        SaveIva();
+    }
+    function validar(){
 	
 	var returnn = true;
 	for(var i=1; i <= <? echo count($_SESSION['cotizacion'] ->productos);?> ; i++){
@@ -704,7 +791,12 @@ function validar(){
 		returnn =  false;
 		document.getElementById('conIva').focus();
 	}
-	//autoSaveCotizacion();
+    //autoSaveCotizacion();
+    alert(returnn);
+    if (returnn==true){
+        SaveIva();
+        window.open("precotizacion.php");
+    }
 	return returnn;
 }
 
@@ -838,7 +930,7 @@ $(function(){
     $( "input,textarea" ).each(function( index ) {
         if( $(this).attr('type') != 'button' && $(this).attr('type') != 'submit' ){
             $(this).blur(function(){
-                //autoSaveCotizacion();
+                SaveIva();
             });
         }
     });
@@ -1319,9 +1411,9 @@ position: fixed;
                                                                 <a name="<?php echo $count?>">
                                                                 </a>
                                                                 <div align="right">
-                                                                    <a href="#" class="iframe" onClick="eliminarProducto(<? echo $n;?>);">
-                                                                        <img src="images/cerrar.jpg" alt="" name="Image86" width="17" height="16" border="0" id="Image<? echo $count;?>" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image<? echo $count;?>','','images/cerrar_r.jpg',1)"  />
-                                                                    </a>
+                                                                    <!--<a href="#" class="iframe" onClick="BorrarProducto('<?echo $count?>','<?echo $_SESSION['cotizacion']->id?>',<?echo $producto->id?>)">-->
+                                                                        <img src="images/cerrar.jpg" alt="" name="Image86" width="17" height="16" border="0" id="Image<? echo $count;?>" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image<? echo $count;?>','','images/cerrar_r.jpg',1)" onClick="BorrarProducto('<?echo $count?>','<?echo $_SESSION['cotizacion']->id?>',<?echo $producto->id?>)" style="cursor:pointer;"  />
+                                                                    <!--</a>-->
                                                                 </div>
                                                             </td>
 
@@ -1402,7 +1494,7 @@ position: fixed;
                                                             <!-- cantidad -->
                                                             <td >
                                                                 <div align="center">
-                                                                    <input <? echo $esLectura;?> name="cantidad<? echo $n;?>" type="text" class="texto_info_negro numberTiny" id="cantidad<? echo $count?>" onChange="if(checkIfNumber(this)){checkDescuento(<? echo $count;?>);setViewCurrency('subtotal<? echo $count;?>','subtotalView<? echo $count;?>'); setViewCurrency('precio_unitario_v<? echo $count;?>','precioVenta<? echo $count;?>');CalcularIva()}" value="<? echo $producto->cantidad;?>" size="5" maxlength="5" />
+                                                                    <input <? echo $esLectura;?> name="cantidad<? echo $n;?>" type="text" class="texto_info_negro numberTiny" id="cantidad<? echo $count?>" onChange="if(checkIfNumber(this)){checkDescuento(<? echo $count;?>);setViewCurrency('subtotal<? echo $count;?>','subtotalView<? echo $count;?>'); setViewCurrency('precio_unitario_v<? echo $count;?>','precioVenta<? echo $count;?>');ActualizarProducto('<?echo $count?>','<?echo $_SESSION['cotizacion']->id?>',<?echo $producto->id?>)}" value="<? echo $producto->cantidad;?>" size="5" maxlength="5" />
                                                                 </div>
                                                             </td>
                                                             
@@ -1495,7 +1587,7 @@ position: fixed;
                                                             <!-- descuento-->
                                                             <td>
                                                                 <div align="center">
-                                                                    <input <? echo $esLectura;?> name="descuento<? echo $n;?>" type="number" class="texto_info_negro numberTiny" onChange="checkDescuento(<? echo $count;?>);setViewCurrency('subtotal<? echo $count;?>','subtotalView<? echo $count;?>'); setViewCurrency('precio_unitario_v<? echo $count;?>','precioVenta<? echo $count;?>');CalcularIva();" id="descuento<? echo $count?>" value="<? echo $producto->descuento*100;?>" size="6" maxlength="3" style="width:40px"/>
+                                                                    <input <? echo $esLectura;?> name="descuento<? echo $n;?>" type="number" class="texto_info_negro numberTiny" onChange="checkDescuento(<? echo $count;?>);setViewCurrency('subtotal<? echo $count;?>','subtotalView<? echo $count;?>'); setViewCurrency('precio_unitario_v<? echo $count;?>','precioVenta<? echo $count;?>');ActualizarProducto('<?echo $count?>','<?echo $_SESSION['cotizacion']->id?>',<?echo $producto->id?>);" id="descuento<? echo $count?>" value="<? echo $producto->descuento*100;?>" size="6" maxlength="3" style="width:40px"/>
                                                                     <input <? echo $esLectura;?> name="recargo[]" type="hidden" class="texto_info_negro numberTiny" id="recargo<? echo $count?>" value="<? if($producto->tipo_moneda_usa != $_SESSION['cotizacion']->tipo_moneda){ echo  ($producto->recargo * $valor_moneda);}else{ echo  $producto->recargo;}?>"/>
                                                                 </div>
                                                             </td>
@@ -1735,8 +1827,8 @@ position: fixed;
                                         <tr>
                                             <td colspan="3" align="center">   
                                                 <input <? echo $esLectura;?> name="crearVersion" type="submit" class="texto_info_negro " id="crearVersion" value="Crear Version" />
-                                                <input <? echo $esLectura;?> name="guardarCotizacion" type="submit" class="texto_info_negro "  id="guardarCotizacion"  value="Guardar" onClick="if(autoSaveCotizacion()) return true;"/>
-                                                <input name="previsualizar" type="submit" id="previsualizar" value="previsualizar" onClick="if(autoSaveCotizacion()) return validar();"  class="texto_info_negro"/>
+                                                <input <? echo $esLectura;?> name="guardarCotizacion" type="button" class="texto_info_negro "  id="guardarCotizacion"  value="Guardar" onClick="SaveCotizacion();"/>
+                                                <input name="previsualizar" type="button" id="previsualizar" value="previsualizar" onClick="validar();"  class="texto_info_negro"/>
                                             </td>
                                         </tr>
                                         <tr>
@@ -1748,8 +1840,8 @@ position: fixed;
                                         </tr>
                                         <tr>
                                             <td colspan="3" align="center">
-                                                <input <? echo $esLectura;?> name="guardarCotizacionYNuevo" type="submit" class="texto_info_negro "  id="guardarCotizacionYNuevo"  value="Guardar y Nuevo" />
-                                                <input <? echo $esLectura;?> name="genera" type="submit" class="texto_info_negro "  id="genera"  value="Generar PDF" onClick="if(autoSaveCotizacion()) return true;"/>
+                                                <input <? echo $esLectura;?> name="guardarCotizacionYNuevo" type="button" class="texto_info_negro "  id="guardarCotizacionYNuevo"  value="Guardar y Nuevo" onClick="SaveNew();"  />
+                                                <input <? echo $esLectura;?> name="genera" type="button" class="texto_info_negro "  id="genera"  value="Generar PDF" onClick="GenerarPDF();">
                                             </td>
                                         </tr>
                                         <tr>
@@ -1955,17 +2047,18 @@ position: fixed;
     </body>
 </html>
 <?php
+    //se hace en la funcion BorrarProducto
     //Borrar producto y guardar cotizacion.
-    if ($borrar==1)
+    /*if ($borrar==1)
     {
        
-        
-        echo "<script>CalcularIva2();</script>";
-        echo "<script>autoSaveCotizacion();</script>";
-        guardarCotizacion();
-        saveCotizacionOnDB();
+        echo "<script>SaveIva();</script>";
+        //echo "<script>CalcularIva2();</script>";
+        //echo "<script>autoSaveCotizacion();</script>";
+        //guardarCotizacion();
+        //saveCotizacionOnDB();
         echo "<script> window.location = 'generar_cotizacion_p.php'; </script>";
-    }
+    }*/
     //guardar producto agregado y cotizacion nueva.
     //var_dump($_GET['g']);
 

@@ -125,9 +125,9 @@ function saveCotizacionOnDB(){
     } else {
         $cotizacion->get( $_SESSION['cotizacion'] -> id , $_SESSION['cotizacion']->id_version );
         if($cotizacion->update( $_SESSION['cotizacion'] )){
-            if( isset( $_SESSION['carrito'] ) )
-                $cotizacion->updateProductos( $_SESSION['carrito'] );
-            
+            //if( isset( $_SESSION['carrito'] ) )
+                //$cotizacion->updateProductos( $_SESSION['carrito'] );
+            return "aqui";
         } else {
             ?><script>alert('ERROR: Cotizacion NO guardada');</script><?
         }
@@ -237,26 +237,13 @@ function guardarCotizacion(){
 
 function guardarCotizacionIva($id_prioridad,$id_estatus,$id_cliente,$id_contacto,$notas_adicionales,$tipo_moneda,$idioma,$terminos_entrega,$LAB,$vigencia,$atencion,$referencia,$con_iva){   
     $id_usuario=$_SESSION['usuario']->id;
-    /*$prioridad=$_POST['id_prioridad'];
-    $id_estatus=$_POST['id_estatus'];
-    $id_cliente=$_POST['id_cliente'];
-	$id_contacto=$_POST['id_contacto'];
-    $notas_adicionales=$_POST['comentarioCotizacion'];
-    $tipo_moneda = $_POST['tipo_moneda'];*/
     $valor_moneda = $_SESSION['dollar'];
-    /*$idioma = $_POST['idioma'];
-    $terminos_entrega = $_POST['terminos_entrega'];
-    $LAB = $_POST['LAB'];
-    $vigencia = $_POST['vigencia'];
-    $atencion = $_POST['atencion'];
-    $referencia = $_POST['referencia'];
-    $con_iva = $_POST['conIva'];*/
     /*
      * GUARDAR EL CARRITO
      */
-    $subtotal = guardarCarrito();
-    $iva = $subtotal * 0.16;
-    $total = $subtotal + $iva;
+    $subtotal = $_SESSION['cotizacion']->subtotal;
+    $iva = $_SESSION['cotizacion']->iva;
+    $total = $_SESSION['cotizacion']->total;
     
     if($tipo_moneda!=1)
         $valor_moneda = 1;
@@ -283,7 +270,7 @@ function guardarCotizacionIva($id_prioridad,$id_estatus,$id_cliente,$id_contacto
         $_SESSION['cotizacion']->referencia = $referencia;
 		$_SESSION['cotizacion']->con_iva = $con_iva;
         $_SESSION['cotizacion']->productos = $_SESSION['carrito'];
-        return "sesion";
+        //return "sesion";
     } else {
         $cotizacion = new Cotizacion();
         $cotizacion->id_usuario = $id_usuario;
@@ -308,8 +295,14 @@ function guardarCotizacionIva($id_prioridad,$id_estatus,$id_cliente,$id_contacto
 		$cotizacion->con_iva = $con_iva;
         $cotizacion->productos = $_SESSION['carrito'];
         $_SESSION['cotizacion'] =  $cotizacion;
-        return "no sesion";
+        //return "no sesion";
     }
-    
+
+    //si la session tiene la cotizacion
+    if (isset($_SESSION['cotizacion'])){
+        $consulta = "UPDATE Cotizaciones SET iva=$iva,subtotal=".$_SESSION['cotizacion']->subtotal.",total=".$_SESSION['cotizacion']->total.",con_iva=".$_SESSION['cotizacion']->con_iva." WHERE id=".$_SESSION['cotizacion']->id;
+        $resultado = mysql_query($consulta) or print("$consulta" . mysql_error());
+        return $consulta;
+    }
 }
 ?>

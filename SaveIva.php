@@ -12,7 +12,7 @@
         $_SESSION['cotizacion']->iva=$_POST['iva'];
         //
         $valor = guardarCotizacionIva($_POST['id_prioridad'],$_POST['id_estatus'],$_POST['id_cliente'],$_POST['id_contacto'],$_POST['comentarioCotizacion'],$_POST['tipo_moneda'],$_POST['idioma'],$_POST['terminos_entrega'],$_POST['LAB'],$_POST['vigencia'],$_POST['atencion'],$_POST['referencia'],$_POST['con_iva']);
-        saveCotizacionOnDB();
+        //$val = saveCotizacionOnDB();
         echo $valor;
     }
 ?>

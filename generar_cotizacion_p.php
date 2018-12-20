@@ -669,6 +669,7 @@ function agregarIva(obj){
                 alert(response);
             }
         });
+
     }
 
 function validar(){
@@ -837,7 +838,7 @@ $(function(){
     $( "input,textarea" ).each(function( index ) {
         if( $(this).attr('type') != 'button' && $(this).attr('type') != 'submit' ){
             $(this).blur(function(){
-                autoSaveCotizacion();
+                //autoSaveCotizacion();
             });
         }
     });

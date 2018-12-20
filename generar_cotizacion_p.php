@@ -103,6 +103,7 @@
     }
 
     //checar si tiene o no iva.
+    /*
     if($_POST['con_iva']!="" || $_POST['con_iva']!=NULL)
     {
         if($_POST['con_iva']=='true')
@@ -120,7 +121,7 @@
         $_SESSION['cotizacion']->iva=$_POST['iva'];
         saveCotizacionOnDB();
     }
-
+    */
     if($_POST['changeCurrencyTo']!="")
     {
         if(isset($_SESSION['carrito']))
@@ -578,6 +579,12 @@ function cerrarV(){
 	window.location = 'generar_cotizacion_p.php';
 	//$.fn.colorbox.close();
 }
+
+/*Se crea un campo llamado con_iva
+*se hace un submit
+*/
+
+/*
 function agregarIva(obj){
     //obj = input conIva
     var form = document.getElementById('form1');
@@ -587,7 +594,83 @@ function agregarIva(obj){
     element.value = obj.checked;//false o true
     form.appendChild(element);
     form.submit();
-}
+}*/
+
+    function SaveIva(coniva){
+        var total = 0;
+        var subtotal = 0;
+        var iva = 0;
+        var total2=0;
+        //Validar si iva esta seleccionado.
+        if (coniva.checked==true) {
+            //validar que tengan productos.
+            if ($('#count')!=0){
+                var count = parseInt($('#count').val())-1;
+                for (i = 1; i <= count; i++){
+                    if ($('#subtotal'+i).length>0){
+                        subtotal = parseFloat($('#subtotal'+i).val());
+                        total = total + subtotal;
+                    }
+                }
+                iva = total * 0.16;
+                total2 = total+iva;
+                $('#subtotal').val(total);//input no se ve.
+                $('#iva').val(iva);//input no se ve.
+                $('#total').val(total2);//input no se ve.
+                setViewCurrency('subtotal','subtotalView');
+                setViewCurrency('iva','ivaView');
+                setViewCurrency('total','totalView');
+            }
+        }
+        else{
+           if ($('#count')!=0){
+                var count = parseInt($('#count').val())-1;
+                for (i = 1; i <= count; i++){
+                    if ($('#subtotal'+i).length>0){
+                        subtotal = parseFloat($('#subtotal'+i).val());
+                        total = total + subtotal;
+                    }
+                }
+                total2 = total;
+                $('#subtotal').val(total);//input no se ve.
+                $('#iva').val(iva);//input no se ve.
+                $('#total').val(total2);//input no se ve.
+                setViewCurrency('subtotal','subtotalView');
+                setViewCurrency('iva','ivaView');
+                setViewCurrency('total','totalView');
+            } 
+        }
+        var parametros={
+            "subtotal":total,
+            "total":total2,
+            "iva":iva,
+            "con_iva":coniva.checked,
+            "id_prioridad":$('#id_prioridad').val(),
+            "id_estatus":$('#id_estatus').val(),
+            "id_cliente":$('#id_cliente').val(),
+            "id_contacto":$('#id_contacto').val(),
+            "comentarioCotizacion":$('#comentarioCotizacion').val(),
+            "tipo_moneda":$('#tipo_moneda').val(),
+            "idioma":$('#idioma').val(),
+            "terminos_entrega":$('#terminos_entrega').val(),
+            "LAB":$('#LAB').val(),
+            "vigencia":$('#vigencia').val(),
+            "atencion":$('#atencion').val(),
+            "referencia":$('#referencia').val()
+        };
+        $.ajax({
+            data: parametros,
+            url: 'SaveIva.php',
+            type: 'post',
+            beforeSend: function(){
+
+            },
+            success: function(response){
+                alert(response);
+            }
+        });
+    }
+
 function validar(){
 	
 	var returnn = true;
@@ -1587,7 +1670,7 @@ position: fixed;
                                             <tr>
                                                 <td align="center" bgcolor="#E3E3E3" class="texto_info_negro">
                                                     <div align="center">
-                                                        <input name="conIva"  type="checkbox" class="texto_info_negro" id="conIva" onClick="CalcularIva();agregarIva(this);" value="1" <? echo $esLectura;?><?if($_SESSION['cotizacion']->con_iva == 1 || !isset($_SESSION['cotizacion'] )) echo "checked";?> />
+                                                        <input name="conIva"  type="checkbox" class="texto_info_negro" id="conIva" onClick="SaveIva(this);" value="1" <? echo $esLectura;?><?if($_SESSION['cotizacion']->con_iva == 1 || !isset($_SESSION['cotizacion'] )) echo "checked";?> />
                                                             IVA
                                                     </div>
                                                 </td>

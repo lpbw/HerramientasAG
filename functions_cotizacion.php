@@ -235,4 +235,81 @@ function guardarCotizacion(){
     }
 }
 
+function guardarCotizacionIva($id_prioridad,$id_estatus,$id_cliente,$id_contacto,$notas_adicionales,$tipo_moneda,$idioma,$terminos_entrega,$LAB,$vigencia,$atencion,$referencia,$con_iva){   
+    $id_usuario=$_SESSION['usuario']->id;
+    /*$prioridad=$_POST['id_prioridad'];
+    $id_estatus=$_POST['id_estatus'];
+    $id_cliente=$_POST['id_cliente'];
+	$id_contacto=$_POST['id_contacto'];
+    $notas_adicionales=$_POST['comentarioCotizacion'];
+    $tipo_moneda = $_POST['tipo_moneda'];*/
+    $valor_moneda = $_SESSION['dollar'];
+    /*$idioma = $_POST['idioma'];
+    $terminos_entrega = $_POST['terminos_entrega'];
+    $LAB = $_POST['LAB'];
+    $vigencia = $_POST['vigencia'];
+    $atencion = $_POST['atencion'];
+    $referencia = $_POST['referencia'];
+    $con_iva = $_POST['conIva'];*/
+    /*
+     * GUARDAR EL CARRITO
+     */
+    $subtotal = guardarCarrito();
+    $iva = $subtotal * 0.16;
+    $total = $subtotal + $iva;
+    
+    if($tipo_moneda!=1)
+        $valor_moneda = 1;
+    
+    if(isset($_SESSION['cotizacion'])){
+        $_SESSION['cotizacion']->id_usuario = $id_usuario;
+        $_SESSION['cotizacion']->prioridad = $prioridad;
+        $_SESSION['cotizacion']->id_cliente = $id_cliente;
+		$_SESSION['cotizacion']->id_contacto = $id_contacto;
+		
+        $_SESSION['cotizacion']->id_estatus = $id_estatus;
+        $_SESSION['cotizacion']->notas_adicionales = $notas_adicionales;
+        $_SESSION['cotizacion']->tipo_moneda = $tipo_moneda;
+        $_SESSION['cotizacion']->valor_moneda = floatval($valor_moneda);
+        $_SESSION['cotizacion']->iva = floatval($iva);
+        $_SESSION['cotizacion']->subtotal = floatval($subtotal);
+        $_SESSION['cotizacion']->total = floatval($total);
+        $_SESSION['cotizacion']->idioma = $idioma;
+        $_SESSION['cotizacion']->LAB = $LAB ;
+        $_SESSION['cotizacion']->terminos_entrega = $terminos_entrega;
+        $_SESSION['cotizacion']->idioma = $idioma;
+        $_SESSION['cotizacion']->vigencia = $vigencia;
+        $_SESSION['cotizacion']->atencion = $atencion;
+        $_SESSION['cotizacion']->referencia = $referencia;
+		$_SESSION['cotizacion']->con_iva = $con_iva;
+        $_SESSION['cotizacion']->productos = $_SESSION['carrito'];
+        return "sesion";
+    } else {
+        $cotizacion = new Cotizacion();
+        $cotizacion->id_usuario = $id_usuario;
+        $cotizacion->prioridad = $prioridad;
+        $cotizacion->id_cliente = $id_cliente;
+		$cotizacion->id_contacto = $id_contacto;
+		
+        $cotizacion->id_estatus = $id_estatus;
+        $cotizacion->notas_adicionales = $notas_adicionales;
+        $cotizacion->tipo_moneda = $tipo_moneda;
+        $cotizacion->valor_moneda = $valor_moneda;
+        $cotizacion->iva = floatval($iva);
+        $cotizacion->subtotal = floatval($subtotal);
+        $cotizacion->total = floatval($total);
+        $cotizacion->idioma = $idioma;
+        $cotizacion->LAB = $LAB;
+        $cotizacion->terminos_entrega = $terminos_entrega;
+        $cotizacion->idioma = $idioma;
+        $cotizacion->vigencia = $vigencia;
+        $cotizacion->atencion = $atencion;
+        $cotizacion->referencia = $referencia;
+		$cotizacion->con_iva = $con_iva;
+        $cotizacion->productos = $_SESSION['carrito'];
+        $_SESSION['cotizacion'] =  $cotizacion;
+        return "no sesion";
+    }
+    
+}
 ?>

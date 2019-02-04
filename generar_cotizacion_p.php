@@ -137,7 +137,7 @@
         guardarCotizacion();
         saveCotizacionOnDB();
     }
-
+    //echo "<script>alert('".$_POST['posicion_borrar']."')</script>";
     if($_POST['posicion_borrar']!="")
     {
         
@@ -153,6 +153,7 @@
         foreach ($_SESSION['carrito']as $n => $producto)
         {
             $producto->partida = $count;
+            echo "<script>alert('$con')</script>";
             $count++;
         }
         //guardarCotizacion();
@@ -330,7 +331,7 @@ body {
 .style51 {font-size: 18}
 
 .imgIco{margin-bottom: 10px;}
-
+.apuntador{cursor: pointer;}
 .rotateButton{
 	top: 5.5em;
 width: 4em;
@@ -375,15 +376,22 @@ $(document).ready(function(){
 		window.location = url;
 	}
 	
-	function eliminarProducto(posicion_borrar){
-		var element = document.createElement('input');
-        element.id='posicion_borrar';
-		element.name='posicion_borrar';
-		element.value = posicion_borrar;
-		element.type = 'hidden';
-		var form = document.getElementById('form1');
-		form.appendChild(element);
-		form.submit();
+	function eliminarProducto(posicion_borrar,IdProducto,IdCotizacion){
+        //console.log(Partida);
+        
+         $.ajax({
+            method: "POST",
+            url: "Eliminar_Producto_Cotizacion.php",
+            data: {IdBorrar:IdProducto,IdCotizacion:IdCotizacion},
+            beforeSend: function(){
+            }
+        })
+        .done(function(data) {
+            console.log(data);
+            if (data==1){
+                location.reload(true);
+            }
+        });
 	}
 	
 	function modificarProducto(id,id_proveedor){
@@ -844,7 +852,7 @@ position: fixed;
 </script>
 </head>
 
-    <body onLoad="MM_preloadImages('images/cerrar_r.jpg','images/icono_comentarios_r.png','images/icono_versiones_r.png','images/icono_tareas_r.png','images/icono_archivos_r.png','icono_historial_r.png')" onUnload="return validarCotizacion();">
+    <body onLoad="MM_preloadImages('images/cerrar_r.jpg','images/icono_comentarios_r.png','images/icono_versiones_r.png','images/icono_tareas_r.png','images/icono_archivos_r.png','images/icono_historial_r.png')" onUnload="return validarCotizacion();">
         <form id="form1" name="form1" method="post" action="">
             <table width="100%"  border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" style="max-width:970px;margin-left: 5px;">
                 <tr>
@@ -1210,6 +1218,12 @@ position: fixed;
                                                     $color = "";
                                                     foreach ($_SESSION['cotizacion'] -> productos as $n => $producto)
                                                     {
+                                                        $ConsultaProductoCotizacion="SELECT id FROM Cotizaciones_Productos WHERE id_cotizacion=".$_SESSION['cotizacion'] ->id." AND id_producto=".$producto->id." AND partida=".$producto->partida;
+                                                        $ResultadoConsulta = mysql_query($ConsultaProductoCotizacion) or print("Eliminar_Producto_Cotizacion: $ConsultaProductoCotizacion " . mysql_error());
+                                                        if(@mysql_num_rows($ResultadoConsulta)>=1){
+                                                            $res=mysql_fetch_assoc($ResultadoConsulta);
+                                                            $cotizacionproducto = $res['id'];
+                                                        }
                                             ?>	
                                                         <tr class="texto_info_negro_c" bgcolor="<? echo $color;?>">
                                                             <!-- borrar producto -->
@@ -1217,7 +1231,7 @@ position: fixed;
                                                                 <a name="<?php echo $count?>">
                                                                 </a>
                                                                 <div align="right">
-                                                                    <a href="#" class="iframe" onClick="eliminarProducto(<? echo $n;?>);">
+                                                                    <a onClick="eliminarProducto(<? echo $n;?>,<? echo $cotizacionproducto;?>,<? echo $_SESSION['cotizacion'] ->id;?>);" class="apuntador">
                                                                         <img src="images/cerrar.jpg" alt="" name="Image86" width="17" height="16" border="0" id="Image<? echo $count;?>" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image<? echo $count;?>','','images/cerrar_r.jpg',1)"  />
                                                                     </a>
                                                                 </div>

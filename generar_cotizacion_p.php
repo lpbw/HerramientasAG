@@ -356,8 +356,31 @@ textarea{resize:none;}
 <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 <script src="ajaxSubmit.js"></script> 
 <script src="colorbox/jquery.colorbox-min.js"></script>
- 
+<!-- <script  src="convertFloatToCurrencyFormat.js"></script> -->
 <script>
+function setViewCurrency(objSrcId,objTargetid){
+    var number = parseFloat(document.getElementById(objSrcId).value);
+    if(!isNaN(number)){
+        number = number.toFixed(4);
+        var thousands  = parseInt(number/1000);
+        var hundreds = number - thousands*1000;
+        
+        var pre="";
+        if(hundreds<100 && thousands>=1)
+            pre="0";
+	
+        var result = "$0";
+        if(thousands >= 1){
+            alert('ene');
+            "$" + thousands + "," + pre + hundreds.toFixed(4);
+        } else{
+            result = "$" + pre + hundreds.toFixed(4);  
+        } 
+        
+
+        document.getElementById(objTargetid).innerHTML = result;
+    }
+}
 
 $(document).ready(function(){
                 //Examples of how to assign the ColorBox event to elements
@@ -461,7 +484,11 @@ $(document).ready(function(){
 		}
 	}
     function checkDescuento(n){
-        var obj = document.getElementById('descuento' + n);
+        //var obj = document.getElementById('descuento' + n);
+        var descuento = $('#descuento'+n).val();
+        //console.log(descuento);
+        
+        
         var limite_descuento = parseFloat(<? echo $_SESSION['usuario']->limite_descuento?>) * 100;
         var precioAnterior = parseFloat( document.getElementById('subtotal' + n ).value );
         var numProveedor=document.getElementById('numProvee' + n ).value;
@@ -469,40 +496,56 @@ $(document).ready(function(){
             limite_descuento=parseFloat(0.52) * 100;
 		if(numProveedor==18 && limite_descuento!=100)
             limite_descuento=parseFloat(0.32) * 100;
-        if(obj.value<0)
+        if(descuento<0)
         {
-            document.getElementById('descuento' + n).value=Math.abs(obj.value);
-            obj.value=Math.abs(obj.value);
+            //document.getElementById('descuento' + n).value=Math.abs(obj.value);
+            //obj.value=Math.abs(obj.value);
+            $('#descuento'+n).val(Math.abs(descuento));
+            descuento=Math.abs($('#descuento'+n).val());
         }
 			
-        if(obj.value > limite_descuento){
+        if(descuento > limite_descuento){
             alert('Tu l\u00edmite de descuento es ' + limite_descuento  + '%');
-            document.getElementById('descuento' + n).value=0;
-            obj.value=0;
-            var precioUnit = document.getElementById('precio_unitario' + n).value;
-            var cantidad = document.getElementById('cantidad' + n).value;
-            var recargo = document.getElementById('recargo' + n).value;
-            var descuento=(obj.value/100) * precioUnit;
-            var subtotalProducto = (  (precioUnit*1 - descuento*1 + recargo*1) * cantidad ).toFixed(2);
-            var precioVenta=(  (precioUnit*1 - descuento*1 + recargo*1) ).toFixed(2);
-            document.getElementById('subtotal' + n).value = subtotalProducto;
-            document.getElementById('precio_unitario_v' + n).value = precioVenta;
-			
+            //document.getElementById('descuento' + n).value=0;
+            //obj.value=0;
+            $('#descuento'+n).val(0);
+            descuento=0
+            //var precioUnit = document.getElementById('precio_unitario' + n).value;
+            //var cantidad = document.getElementById('cantidad' + n).value;
+            //var recargo = document.getElementById('recargo' + n).value;
+            //var descuento=(obj.value/100) * precioUnit;
+            var precioUnit = $('#precio_unitario'+n).val();
+            var cantidad = $('#cantidad'+n).val();
+            var recargo = $('#recargo'+n).val();
+            var caldescuento=(descuento/100) * precioUnit;
+            var subtotalProducto = (  (precioUnit*1 - caldescuento*1 + recargo*1) * cantidad ).toFixed(4);
+            var precioVenta=(  (precioUnit*1 - caldescuento*1 + recargo*1) ).toFixed(4);
+            //document.getElementById('subtotal' + n).value = subtotalProducto;
+            //document.getElementById('precio_unitario_v' + n).value = precioVenta;
+            $('#subtotal'+n).val(subtotalProducto);
+			$('#precio_unitario_v'+n).val(precioVenta);
             setTotals( subtotalProducto , precioAnterior );
         } else {
-            var precioUnit = document.getElementById('precio_unitario' + n).value;//91.98
+            //var precioUnit = document.getElementById('precio_unitario' + n).value;//91.98
+            var precioUnit = $('#precio_unitario'+n).val();
             //console.log('precio unitario: '+precioUnit);
-            var cantidad = document.getElementById('cantidad' + n).value;//1
+            //var cantidad = document.getElementById('cantidad' + n).value;//1
+            var cantidad = $('#cantidad'+n).val();
             //console.log('cantidad: '+cantidad);
-            var recargo = document.getElementById('recargo' + n).value;//5.424
+            //var recargo = document.getElementById('recargo' + n).value;//5.424
+            var recargo = $('#recargo'+n).val();
             //console.log('recargo: '+recargo);
-            var descuento=(obj.value/100) * precioUnit;//0
-            //console.log('descuento: '+descuento);
-            var subtotalProducto = (  (precioUnit*1 - descuento*1 + recargo*1) * cantidad ).toFixed(2);
+            var caldescuento=(descuento/100) * precioUnit;//0
+            console.log('descuento: '+caldescuento);
+            var subtotalProducto = ( (precioUnit*1 - descuento*1 + recargo*1) * cantidad ).toFixed(4);
             //console.log('subtotal: '+subtotalProducto);
-            var precioVenta=(  (precioUnit*1 - descuento*1 + recargo*1) ).toFixed(2);
-            document.getElementById('subtotal' + n).value = subtotalProducto;
-            document.getElementById('precio_unitario_v' + n).value = precioVenta;
+            var precioVenta=((precioUnit*1 - descuento*1 + recargo*1)).toFixed(4);
+            /*document.getElementById('subtotal' + n).value = subtotalProducto;
+            document.getElementById('precio_unitario_v' + n).value = precioVenta;*/
+            $('#subtotal'+n).val(subtotalProducto);
+            console.log("ccc"+$('#subtotal'+n).val());
+            
+			$('#precio_unitario_v'+n).val(precioVenta);
 			
             setTotals( subtotalProducto , precioAnterior );
         }
@@ -522,9 +565,9 @@ $(document).ready(function(){
             document.getElementById('subtotal').value = subttl + diferencia;
             document.getElementById('total').value = subttl + diferencia + iva_value;
             document.getElementById('iva').value = iva_value;
-            setViewCurrency('iva','ivaView');
-            setViewCurrency('subtotal','subtotalView');
-            setViewCurrency('total','totalView');
+            //setViewCurrency('iva','ivaView');
+            //setViewCurrency('subtotal','subtotalView');
+            //setViewCurrency('total','totalView');
         }
     }
     
@@ -765,7 +808,7 @@ function borrar(id_version,id){
     
 }
 </script>
-<script src="convertFloatToCurrencyFormat.js"></script>
+
 <style type="text/css">
 
 .numberTiny {	width: 60px;

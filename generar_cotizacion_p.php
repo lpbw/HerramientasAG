@@ -367,14 +367,18 @@ function setViewCurrency(objSrcId,objTargetid){
         
         var pre="";
         if(hundreds<100 && thousands>=1)
+        {
             pre="0";
+             
+        }
+            
 	
-        var result = "$0";
+       var result = "$0";
         if(thousands >= 1){
-            alert('ene');
-            "$" + thousands + "," + pre + hundreds.toFixed(4);
+            
+            result ="$" + thousands + "," + pre + hundreds.toFixed(2);
         } else{
-            result = "$" + pre + hundreds.toFixed(4);  
+            result = "$" + pre + hundreds.toFixed(2);  
         } 
         
 
@@ -1396,21 +1400,32 @@ position: fixed;
 
                                                                             // cambio de dolar a pesos
                                                                             if ($producto->tipo_moneda_usa == "1" && $_SESSION['cotizacion']->tipo_moneda == "0") {
-                                                                                
-                                                                                echo getFormatedNumberForMoney((($producto->precio)+ ($producto->recargo * $valor_moneda)));
+                                                                                echo "<script>console.log('dolar a pesos')</script>";
+                                                                                echo "<script>console.log('precioventa: ".$producto->precio."')</script>";
+                                                                                echo getFormatedNumberForMoney((($producto->precio * $valor_moneda)+ ($producto->recargo * $valor_moneda)));
                                                                             }
                                                                                 //pesos a dolar
                                                                             else if($producto->tipo_moneda_usa == "0" && $_SESSION['cotizacion']->tipo_moneda == "1")
                                                                             {
-                                                                                //echo $_SESSION['cotizacion']->tipo_moneda;
-                                                                                //$pr = ( ((1 - $producto->descuento ) * $producto->precio) + ($producto->recargo * $valor_moneda) );
-                                                                                //echo $pr;
-                                                                                 //echo $valor_moneda;
-                                                                               echo getFormatedNumberForMoney(( ($producto->precio) + ($producto->recargo * $valor_moneda) ));
+                                                                                echo "<script>console.log('pesos a dolar')</script>";
+                                                                                echo "<script>console.log('precioventa: ".$producto->precio."')</script>";
+                                                                               echo getFormatedNumberForMoney(( ($producto->precio) + ($producto->recargo) ));
                                                                             }
                                                                             else if($producto->tipo_moneda_usa == $_SESSION['cotizacion']->tipo_moneda)
                                                                             {
-                                                                                echo getFormatedNumberForMoney(( ( $producto->precio) + $producto->recargo ) );
+                                                                                switch ($producto->tipo_moneda_usa)
+                                                                                {
+                                                                                    case "0":
+                                                                                       echo getFormatedNumberForMoney($producto->precio + ($producto->recargo*$valor_moneda) );
+                                                                                    break;
+                                                                                    case "1":
+                                                                                        echo getFormatedNumberForMoney($producto->precio + $producto->recargo);
+                                                                                    break;
+                                                                                    default:
+                                                                                        # code...
+                                                                                    break;
+                                                                                }
+                                                                                
                                                                             }
                                                                         ?>
                                                                     </span>
@@ -1457,23 +1472,21 @@ position: fixed;
                                                             <!-- subtotal -->
                                                             <td >
                                                                 <div align="center"> 
-                                                                    <span name="subtotalView[]" class="texto_info_negro numberTiny" id="subtotalView<? echo $count;?>">
-                                                                        <?
-                                                                            // var_dump('precio: '.$producto->precio);
-                                                                            // var_dump('recargo: '.$producto->recargo);
-                                                                            // var_dump('moneda: '.$valor_moneda);
-                                                                             // cambio de dolar a pesos
+                                                                    <span name="subtotalView[]" class="texto_info_negro numberTiny" id="subtotalView<? echo $count;?>"><?
                                                                              if ($producto->tipo_moneda_usa == "1" && $_SESSION['cotizacion']->tipo_moneda == "0") {
+                                                                                echo "<script>console.log('dolar a pesos subtotal');</script>";
+                                                                                echo "<script>console.log('subtotal:".$producto->precio."');</script>";
                                                                                 echo getFormatedNumberForMoney((((1-($producto->descuento))*$producto->precio)+ ($producto->recargo * $valor_moneda)) * $producto->cantidad);
                                                                             }
                                                                                 //pesos a dolar
                                                                             else if($producto->tipo_moneda_usa == "0" && $_SESSION['cotizacion']->tipo_moneda == "1")
                                                                             {
-                                                                                //echo $_SESSION['cotizacion']->tipo_moneda;
-                                                                                //$pr = ( ((1 - $producto->descuento ) * $producto->precio) + ($producto->recargo * $valor_moneda) );
-                                                                                //echo $pr;
-                                                                                 //echo $valor_moneda;
-                                                                               echo getFormatedNumberForMoney(( ((1 - $producto->descuento ) * $producto->precio) + ($producto->recargo * $valor_moneda)) * $producto->cantidad);
+                                                                                echo "<script>console.log('pesos a dolar subtotal');</script>";
+                                                                                 echo "<script>console.log('subtotal:".$producto->recargo."');</script>";
+                                                                                 if (empty($producto->descuento)){
+                                                                                     $producto->descuento=0;
+                                                                                 }
+                                                                               echo getFormatedNumberForMoney(( ((1 - $producto->descuento ) * ($producto->precio)) + ($producto->recargo)) * $producto->cantidad);
                                                                             }
                                                                             else if($producto->tipo_moneda_usa == $_SESSION['cotizacion']->tipo_moneda)
                                                                             {
@@ -1483,12 +1496,13 @@ position: fixed;
                                                                         <? //if($producto->tipo_moneda_usa != $_SESSION['cotizacion']->tipo_moneda){ echo getFormatedNumberForMoney((((1-($producto->descuento))*$producto->precio)+ ($producto->recargo * $valor_moneda)) * $producto->cantidad);}else{echo getFormatedNumberForMoney((((1-($producto->descuento))*$producto->precio)+$producto->recargo) * $producto->cantidad);}
                                                                         ?>
                                                                     </span>
-                                                                    <input <? echo $esLectura;?> name="subtotal[]" type="hidden" class="texto_info_negro numberTiny" id="subtotal<? echo $count;?>" value="
-                                                                    <? 
+                                                                    <input <? echo $esLectura;?> name="subtotal[]" type="hidden" class="texto_info_negro numberTiny" id="subtotal<? echo $count;?>" value="<? 
                                                                         if ($producto->tipo_moneda_usa == "1" && $_SESSION['cotizacion']->tipo_moneda == "0")
                                                                         {
+                                                                            //dolar a pesos
+                                                                            
                                                                             // echo getFormatedNumberForMoney((((1-($producto->descuento))*$producto->precio)+ ($producto->recargo * $valor_moneda)) * $producto->cantidad);
-                                                                            echo ((((1-($producto->descuento))*$producto->precio)+ ($producto->recargo * $valor_moneda)) * $producto->cantidad);
+                                                                            echo ((((1-($producto->descuento))*($producto->precio))+ ($producto->recargo * $valor_moneda)) * $producto->cantidad);
                                                                         }
                                                                             //pesos a dolar
                                                                         else if($producto->tipo_moneda_usa == "0" && $_SESSION['cotizacion']->tipo_moneda == "1")

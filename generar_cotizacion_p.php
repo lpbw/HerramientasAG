@@ -235,7 +235,7 @@
             $_SESSION['buscadorCotizaciones']['proveedor']='';
             $_SESSION['buscadorCotizaciones']['nombre']='';
             $_SESSION['buscadorCotizaciones']['codigo_buscar'] = $_POST['agregar_producto_codigo'];
-            echo "<script>window.location = 'seleccionar_productos_cotizacion.php?submit=".$_POST['agregar_producto_codigo']."';</script>";
+            echo "<script>window.location = 'seleccionar_productos_cotizacion.php?submit=".$_POST['agregar_producto_codigo']."&contacto=".$_POST['contacto']."';</script>";
         }
     }
 
@@ -403,23 +403,7 @@ $(document).ready(function(){
 		window.location = url;
 	}
 	
-	function eliminarProducto(posicion_borrar,IdProducto,IdCotizacion){
-        //console.log(Partida);
-        
-         $.ajax({
-            method: "POST",
-            url: "Eliminar_Producto_Cotizacion.php",
-            data: {IdBorrar:IdProducto,IdCotizacion:IdCotizacion},
-            beforeSend: function(){
-            }
-        })
-        .done(function(data) {
-            console.log(data);
-            if (data==1){
-                location.reload(true);
-            }
-        });
-	}
+	
     
     function ModificaProducto(productocotizacion,n) {
         console.log(productocotizacion);
@@ -760,10 +744,14 @@ function autoSaveCotizacion(){
 	var subtotal = $('#subtotal').val();
     var total = $('#total').val();
     var iva = $('#iva').val();
+    var contacto = $('#id_contacto').val();
+    $('#contacto').val(contacto);
+    console.log($('#contacto').val());
+    
     //console.log(subtotal);
     
     $("#form1").ajaxSubmit({
-            url: 'saveCotizacion.php?sub='+subtotal+'&total='+total+'&iva='+iva, 
+            url: 'saveCotizacion.php?sub='+subtotal+'&total='+total+'&iva='+iva+'&contacto='+contacto, 
             type: 'post'
         });
     } else if(document.getElementById('id_cliente').value==0){
@@ -783,7 +771,67 @@ function autoSaveCotizacion(){
 }
 
 
+function eliminarProducto(posicion_borrar,IdProducto,IdCotizacion){
+        //console.log(Partida);
+            var total = 0;
+            var subtotal = 0;
+            var iva = 0;
+            if ($('#count')!=0) 
+            {
+                var count = parseInt($('#count').val())-1;
+               // console.log('count'+count);
+                for (i = 1; i <= count; i++)
+                {
+                    if ($('#subtotal'+i).length>0)//si existe
+                    {
+                        
+                        subtotal = parseFloat($('#subtotal'+i).val());
+                        console.log('subtotal: '+subtotal);
+                        total = total + subtotal;
+                        console.log('total: '+total);
+                    }
+                }
+            }
+            var c=posicion_borrar+1;
+            total=total-parseFloat($('#subtotal'+c).val());
+            console.log('total: '+total);
+            //cuando tiene seleccionado el iva
+                if($('#conIva').attr('checked'))
+                {
+                   
+                    iva = total * 0.16;
+                    console.log('iva: '+iva);
+                    
+                }
 
+                //console.log('iva: '+iva);
+                var total2 = total+iva;
+                $('#subtotal').val(total);//input no se ve.
+                $('#iva').val(iva);//input no se ve.
+                $('#total').val(total2);//input no se ve.
+                setViewCurrency('subtotal','subtotalView');
+                setViewCurrency('iva','ivaView');
+                setViewCurrency('total','totalView');
+                
+         $.ajax({
+            method: "POST",
+            url: "Eliminar_Producto_Cotizacion.php",
+            data: {IdBorrar:IdProducto,IdCotizacion:IdCotizacion},
+            beforeSend: function(){
+            }
+        })
+        .done(function(data) {
+            console.log(data);
+            if (data==1){
+                if(autoSaveCotizacion()==true)
+                {
+                    location.reload(true);
+                }
+                    
+            }
+            
+        });
+	}
 function clearSessionCotizacion(){
     $("#form1").ajaxSubmit({
         url: 'clearSessionCotizacion.php', 
@@ -907,6 +955,7 @@ position: fixed;
 
     <body onLoad="MM_preloadImages('images/cerrar_r.jpg','images/icono_comentarios_r.png','images/icono_versiones_r.png','images/icono_tareas_r.png','images/icono_archivos_r.png','images/icono_historial_r.png')" onUnload="return validarCotizacion();">
         <form id="form1" name="form1" method="post" action="">
+            <input type="hidden" value="<?echo $_SESSION['cotizacion']->contacto;?>" id="contacto" name="contacto"/>
             <table width="100%"  border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" style="max-width:970px;margin-left: 5px;">
                 <tr>
                     <td width="785" valign="top">
@@ -1216,7 +1265,7 @@ position: fixed;
                                             <span class="texto_chico_gris">
                                                 <!-- boton buscar producto -->
                                                 <span class="texto_info_negro" style="padding:0px 10px 0px 10px; background-color:#F5F5F5; width:880">
-                                                    <input <? echo $esLectura;?> style="float:left" name="Agregar" type="button" id="Agregar" value="Buscar producto" onclick="if(autoSaveCotizacion()) window.location = 'seleccionar_productos_cotizacion.php'; " class="texto_info_negro" />
+                                                    <input <? echo $esLectura;?> style="float:left" name="Agregar" type="button" id="Agregar" value="Buscar producto" onclick="if(autoSaveCotizacion()) var contacto=$('#id_contacto').val(); window.location = 'seleccionar_productos_cotizacion.php?contacto='+contacto; " class="texto_info_negro" />
                                                 </span>
                                                 <!-- boton agregar especial -->
                                                 <input <? echo $esLectura;?> style="float:left" type="button" class="texto_info_negro" id="Agregar5" onClick="if(autoSaveCotizacion()) abrir('cambia_producto_especial.php');" value="Agregar Especial"/>
@@ -1929,10 +1978,29 @@ position: fixed;
             var iva = $('#iva').val();
             var select = document.getElementById("id_contacto");
             var options=document.getElementsByTagName("option");
-            var contacto = select.value;
+            var contacto = $('#id_contacto').val();
             $("#form1").ajaxSubmit({
-                    url: 'saveCotizacion.php?sub='+subtotal+'&total='+total+'&iva='+iva, 
+                    url: 'saveCotizacion.php?sub='+subtotal+'&total='+total+'&iva='+iva+'&contacto='+contacto, 
                     type: 'post'
+                });
+            }
+            function autoSaveCotizacion3(contacto){
+            //console.log('autoSaveCotizacion3');
+            //console.log(contacto);
+            var cotizacion=<? echo $_SESSION['cotizacion']->id;?>;
+            //console.log(cotizacion);
+                $.ajax({
+                    method: "POST",
+                    url: "savecontacto.php",
+                    data: {cotizacion:cotizacion,contacto:contacto},
+                    beforeSend: function(){
+                    }
+                })
+                .done(function(data) {
+                    //console.log(data);
+                    if (data==1){
+                        //location.reload(true);
+                    }
                 });
             }
 
@@ -1996,8 +2064,10 @@ position: fixed;
     $g = $_GET['g'];
     if ($g == "1" || $g == 1)
     {
+        $contacto = $_GET['contacto'];//recibido de selleccionar_producto_cotizacion.php
+        //echo "<script>alert('$contacto');</script>";
         echo "<script>CalcularIva2();</script>";
-        echo "<script>autoSaveCotizacion2();</script>";
+        echo "<script>autoSaveCotizacion3('".$contacto."');</script>";
         guardarCotizacion();
         //saveCotizacionOnDB();
         $g="";

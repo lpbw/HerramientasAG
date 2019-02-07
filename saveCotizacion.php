@@ -10,9 +10,11 @@ session_start();
 $sub=$_GET['sub'];
 $total=$_GET['total'];
 $iva=$_GET['iva'];
+$contacto=$_GET['contacto'];
     guardarCotizacion();
     $_SESSION['cotizacion']->subtotal=$sub;
     $_SESSION['cotizacion']->total=$total;
     $_SESSION['cotizacion']->iva=$iva;
+    $_SESSION['cotizacion']->contacto=$contacto;
     saveCotizacionOnDB();
 ?>

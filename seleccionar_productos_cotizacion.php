@@ -5,7 +5,8 @@
     include_once "checar_sesion_admin.php";
     include_once "coneccion.php";
     session_start();
-
+    $contacto=$_REQUEST['contacto'];
+    //echo "<script>alert('$contacto');</script>";
     if($_REQUEST['buscar']!='' || $_REQUEST['codigo_buscar']!='' || $_REQUEST['familia']!='' || $_REQUEST['proveedor']!='' || $_SESSION['buscadorCotizaciones']['codigo_buscar']!='' || $_SESSION['buscadorCotizaciones']['familia']!='' || $_SESSION['buscadorCotizaciones']['proveedor']!='' || $_REQUEST['submit'])
     {
         $_SESSION['buscadorCotizaciones']['nombre'] = isset($_POST['nombre']) ? $_POST['nombre'] : $_SESSION['buscadorCotizaciones']['nombre'];
@@ -172,7 +173,7 @@
                             }
                         }
                     }
-                    xmlhttp.open("GET","agregar_carrito.php?id="+id_prod+"&cantidad="+cantidad,true);
+                    xmlhttp.open("GET","agregar_carrito.php?id="+id_prod+"&cantidad="+cantidad+'&contacto=',true);
                     xmlhttp.send();
                 } 
                 else 
@@ -231,6 +232,7 @@
               <tr>
                 <td>
                  <form id="formBuscar" name="formBuscar" method="post" action="">
+                   <input type="hidden" value="<? echo $contacto;?>" name="contacto" id="contacto"/>
                 <table width="580" border="0" align="center" cellpadding="2" cellspacing="2">
                   <tr>
                     <td bgcolor="#DD1A22" class="texto_info_blanco"><div align="left">Buscar por:</div>
@@ -311,7 +313,7 @@
                       </tr>
                       <tr>
                         <td colspan="4" align="right" class="texto_info_negro"><span class="style6">
-                          <input name="comprar" type="button" class="texto_info" id="comprar" onclick="window.location = 'generar_cotizacion_p.php?g=1'" value="Aceptar" />
+                          <input name="comprar" type="button" class="texto_info" id="comprar" onclick="window.location = 'generar_cotizacion_p.php?g=1&contacto=<? echo $contacto;?>'" value="Aceptar" />
                         </span></td>
                       </tr>
                     </table></td>

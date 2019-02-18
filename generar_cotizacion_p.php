@@ -407,22 +407,44 @@ $(document).ready(function(){
     
     function ModificaProducto(productocotizacion,n) {
         console.log(productocotizacion);
+        var des=$('#descuento'+n).val();
+        console.log(des);
+        var limite_descuento = parseFloat(<? echo $_SESSION['usuario']->limite_descuento?>) * 100;
+        var precioAnterior = parseFloat( document.getElementById('subtotal' + n ).value );
+        var numProveedor=document.getElementById('numProvee' + n ).value;
+        if(numProveedor==20 && limite_descuento!=100)
+            limite_descuento=parseFloat(0.52) * 100;
+		if(numProveedor==18 && limite_descuento!=100)
+            limite_descuento=parseFloat(0.32) * 100;
+        if(des<0)
+        {
+            //document.getElementById('descuento' + n).value=Math.abs(obj.value);
+            //obj.value=Math.abs(obj.value);
+            $('#descuento'+n).val(Math.abs(des));
+            des=Math.abs($('#descuento'+n).val());
+        }
+			
+        if(des > limite_descuento){
+        } 
+        else {
+            des=des/100;
+            var producto={productocotizacion:productocotizacion,descuento:des,cantidad:$('#cantidad'+n).val(),precio:$('#precio_unitario'+n).val(),comentario:$('#comentarioProducto'+n).val()};
+            //console.log(producto);
+            $.ajax({
+                method: "POST",
+                url: "Modificar_Producto_Cotizacion.php",
+                data: producto,
+                beforeSend: function(){
+                }
+            })
+            .done(function(data) {
+                console.log(data);
+                if (data==1){
+                    //location.reload(true);
+                }
+            });
+        }
         
-        var producto={productocotizacion:productocotizacion,descuento:$('#descuento'+n).val(),cantidad:$('#cantidad'+n).val(),precio:$('#precio_unitario'+n).val(),comentario:$('#comentarioProducto'+n).val()};
-        //console.log(producto);
-        $.ajax({
-            method: "POST",
-            url: "Modificar_Producto_Cotizacion.php",
-            data: producto,
-            beforeSend: function(){
-            }
-        })
-        .done(function(data) {
-            console.log(data);
-            if (data==1){
-                //location.reload(true);
-            }
-        });
     }
 	function modificarProducto(id,id_proveedor){
 		var form = document.getElementById('form1');
@@ -493,11 +515,13 @@ $(document).ready(function(){
     function checkDescuento(n){
         //var obj = document.getElementById('descuento' + n);
         var descuento = $('#descuento'+n).val();
-        console.log('descuento: '+descuento);
+        //console.log('descuento: '+descuento);
         //descuento = descuento*100;
         
         var limite_descuento = parseFloat(<? echo $_SESSION['usuario']->limite_descuento?>) * 100;
         var precioAnterior = parseFloat( document.getElementById('subtotal' + n ).value );
+        console.log('anterior: '+precioAnterior);
+        
         var numProveedor=document.getElementById('numProvee' + n ).value;
         if(numProveedor==20 && limite_descuento!=100)
             limite_descuento=parseFloat(0.52) * 100;
@@ -511,34 +535,34 @@ $(document).ready(function(){
             descuento=Math.abs($('#descuento'+n).val());
         }
 			
-        if(descuento > limite_descuento){
+        if(descuento > limite_descuento){//limite_descuento){
             alert('Tu l\u00edmite de descuento es ' + limite_descuento  + '%');
             $('#descuento'+n).val(0);
             descuento=0
             var precioUnit = $('#precio_unitario'+n).val();
             var cantidad = $('#cantidad'+n).val();
             var recargo = $('#recargo'+n).val();
-            var caldescuento=(descuento/100) * precioUnit;
-            var subtotalProducto = ( (precioUnit*1 - caldescuento*1) * cantidad ).toFixed(4);
-            var precioVenta=(precioUnit*1-caldescuento*1).toFixed(4);
+            var caldescuento=((precioUnit*1+recargo*1)*(descuento/100));//0
+            var subtotalProducto =  ( ((precioUnit*1+recargo*1) - caldescuento*1) * cantidad ).toFixed(4);
+            var precioVenta=((precioUnit*1+ recargo*1)-caldescuento*1).toFixed(4);
             $('#subtotal'+n).val(subtotalProducto);
 			$('#precio_unitario_v'+n).val(precioVenta);
             setTotals( subtotalProducto , precioAnterior );
         } else {
             var precioUnit = $('#precio_unitario'+n).val();
-            console.log('precio unitario: '+precioUnit);
+            //console.log('precio unitario: '+precioUnit);
             
             var cantidad = $('#cantidad'+n).val();
-            console.log('cantidad: '+cantidad);
+            //console.log('cantidad: '+cantidad);
             var recargo = $('#recargo'+n).val();
-            console.log('recargo: '+recargo);
+            //console.log('recargo: '+recargo);
             var caldescuento= ((precioUnit*1+recargo*1)*(descuento/100));//0
-            console.log('caldescuento: '+caldescuento);
+            //console.log('caldescuento: '+caldescuento);
             var subtotalProducto = ( ((precioUnit*1+recargo*1) - caldescuento*1) * cantidad ).toFixed(4);
-            console.log('subtotalproducto: '+subtotalProducto);
+            //console.log('subtotalproducto: '+subtotalProducto);
             //var precioVenta=((precioUnit*1 - descuento*1 + recargo*1)).toFixed(4);
             var precioVenta=((precioUnit*1+ recargo*1)-caldescuento*1).toFixed(4);
-            console.log('precioVenta: '+precioVenta);
+            //console.log('precioVenta: '+precioVenta);
             $('#subtotal'+n).val(subtotalProducto);
 			$('#precio_unitario_v'+n).val(precioVenta);
             setTotals( subtotalProducto , precioAnterior );
@@ -1435,7 +1459,7 @@ position: fixed;
                                                                     else 
                                                                     { 
                                                                 ?>
-                                                                        <a href="cambia_um.php?attrName=unidad_metrica<? echo "&id=$producto->id";?>" class="iframe">
+                                                                        <a href="cambia_um.php?attrName=unidad_metrica<? echo "&id=$producto->id&contacto=".$_SESSION['cotizacion']->id_contacto;?>" class="iframe">
                                                                             <img src="images/warning.png" alt="agregar unidad metrica" name="warning" width="16" height="16" id="warning2" title="agregar unidad metrica"/>
                                                                             <input type="hidden" id="conUnidadMetrica<? echo $count;?>" value="no" />
                                                                         </a>
@@ -1545,7 +1569,7 @@ position: fixed;
                                                             <!-- descuento-->
                                                             <td>
                                                                 <div align="center">
-                                                                    <input <? echo $esLectura;?> name="descuento<? echo $n;?>" type="number" class="texto_info_negro numberTiny" onChange="checkDescuento(<? echo $count;?>);setViewCurrency('subtotal<? echo $count;?>','subtotalView<? echo $count;?>'); setViewCurrency('precio_unitario_v<? echo $count;?>','precioVenta<? echo $count;?>');CalcularIva();ModificaProducto(<? echo $cotizacionproducto?>,<?echo $count?>);" id="descuento<? echo $count?>" value="<? echo ($producto->descuento/100)*100;?>" size="6" maxlength="3" style="width:40px"/>
+                                                                    <input <? echo $esLectura;?> name="descuento<? echo $n;?>" type="number" class="texto_info_negro numberTiny" onChange="checkDescuento(<? echo $count;?>);setViewCurrency('subtotal<? echo $count;?>','subtotalView<? echo $count;?>'); setViewCurrency('precio_unitario_v<? echo $count;?>','precioVenta<? echo $count;?>');CalcularIva();ModificaProducto(<? echo $cotizacionproducto?>,<?echo $count?>);" id="descuento<? echo $count?>" value="<? echo ($producto->descuento*100);?>" size="6" maxlength="3" style="width:40px"/>
                                                                     <input <? echo $esLectura;?> name="recargo[]" type="hidden" class="texto_info_negro numberTiny" id="recargo<? echo $count?>" value="<? 
                                                                     if ($producto->tipo_moneda_usa == "1" && $_SESSION['cotizacion']->tipo_moneda == "0") {
                                                                         echo  ($producto->recargo * $valor_moneda);
@@ -1576,29 +1600,37 @@ position: fixed;
                                                                 <div align="center"> 
                                                                     <span name="subtotalView[]" class="texto_info_negro" id="subtotalView<? echo $count;?>"><?
                                                                              if ($producto->tipo_moneda_usa == "1" && $_SESSION['cotizacion']->tipo_moneda == "0") {
-                                                                                //echo "<script>console.log('dolar a pesos subtotal');</script>";
-                                                                                //echo "<script>console.log('subtotal:".$producto->precio."');</script>";
-                                                                                echo getFormatedNumberForMoney(((($producto->precio+($producto->recargo*$valor_moneda))-(($producto->precio+($producto->recargo*$valor_moneda))*($producto->descuento/100)))*$producto->cantidad));
+                                                                                echo "<script>console.log('dolar a pesos subtotal');</script>";
+                                                                                    echo "<script>console.log('pp:".($producto->precio+$producto->recargo)."');</script>";
+                                                                                    echo "<script>console.log('descuento:".(($producto->precio+$producto->recargo)*($producto->descuento))."');</script>";
+                                                                                echo getFormatedNumberForMoney(((($producto->precio+($producto->recargo*$valor_moneda))-(($producto->precio+($producto->recargo*$valor_moneda))*($producto->descuento)))*$producto->cantidad));
                                                                             }
                                                                                 //pesos a dolar
                                                                             else if($producto->tipo_moneda_usa == "0" && $_SESSION['cotizacion']->tipo_moneda == "1")
                                                                             {
-                                                                                //echo "<script>console.log('pesos a dolar subtotal');</script>";
-                                                                                //echo "<script>console.log('subtotal:".$producto->recargo."');</script>";
+                                                                                echo "<script>console.log('pesos a dolar subtotal');</script>";
+                                                                                    echo "<script>console.log('pp:".($producto->precio+$producto->recargo)."');</script>";
+                                                                                    echo "<script>console.log('descuento:".(($producto->precio+$producto->recargo)*($producto->descuento))."');</script>";
                                                                                  if (empty($producto->descuento)){
                                                                                      $producto->descuento=0;
                                                                                  }
-                                                                               echo getFormatedNumberForMoney(((($producto->precio+$producto->recargo)-(($producto->precio+$producto->recargo)*($producto->descuento/100)))*$producto->cantidad));
+                                                                               echo getFormatedNumberForMoney(((($producto->precio+$producto->recargo)-(($producto->precio+$producto->recargo)*($producto->descuento)))*$producto->cantidad));
                                                                             }
                                                                             else if($producto->tipo_moneda_usa == $_SESSION['cotizacion']->tipo_moneda)
                                                                             {
                                                                                 switch ($producto->tipo_moneda_usa)
                                                                                 {
                                                                                     case "0":
-                                                                                        echo getFormatedNumberForMoney(((($producto->precio+($producto->recargo*$valor_moneda))-(($producto->precio+($producto->recargo*$valor_moneda))*($producto->descuento/100)))*$producto->cantidad));
+                                                                                    echo "<script>console.log('pesos a  pesos');</script>";
+                                                                                    echo "<script>console.log('pp:".($producto->precio+$producto->recargo)."');</script>";
+                                                                                    echo "<script>console.log('descuento:".(($producto->precio+$producto->recargo)*($producto->descuento))."');</script>";
+                                                                                        echo getFormatedNumberForMoney(((($producto->precio+($producto->recargo*$valor_moneda))-(($producto->precio+($producto->recargo*$valor_moneda))*($producto->descuento)))*$producto->cantidad));
                                                                                     break;
                                                                                     case "1":
-                                                                                       echo getFormatedNumberForMoney(((($producto->precio+$producto->recargo)-(($producto->precio+$producto->recargo)*($producto->descuento/100)))*$producto->cantidad));
+                                                                                    echo "<script>console.log('dolar a  dolar');</script>";
+                                                                                    echo "<script>console.log('pp:".($producto->precio+$producto->recargo)."');</script>";
+                                                                                    echo "<script>console.log('descuento:".(($producto->precio+$producto->recargo)*($producto->descuento))."');</script>";
+                                                                                       echo getFormatedNumberForMoney(((($producto->precio+$producto->recargo)-(($producto->precio+$producto->recargo)*($producto->descuento)))*$producto->cantidad));
                                                                                     break;
                                                                                     default:
                                                                                         # code...
@@ -1984,6 +2016,19 @@ position: fixed;
                     type: 'post'
                 });
             }
+             function autoSaveCotizacion4(){
+
+            var subtotal = $('#subtotal').val();
+            var total = $('#total').val();
+            var iva = $('#iva').val();
+            var select = document.getElementById("id_contacto");
+            var options=document.getElementsByTagName("option");
+            
+            $("#form1").ajaxSubmit({
+                    url: 'saveCotizacion.php?sub='+subtotal+'&total='+total+'&iva='+iva, 
+                    type: 'post'
+                });
+            }
             function autoSaveCotizacion3(contacto){
             //console.log('autoSaveCotizacion3');
             //console.log(contacto);
@@ -2077,9 +2122,13 @@ position: fixed;
     if($_GET['reloadCarritoOnId']!='')
     {
         reloadCarrito($_GET['reloadCarritoOnId']);
-        clearURIVariables();
+        //clearURIVariables();
+        $contacto = $_GET['contacto'];
+        echo "<script>autoSaveCotizacion3('".$contacto."');</script>";
         echo "<script>CalcularIva2();</script>";
-        echo "<script>autoSaveCotizacion2();</script>";
+        
+        //echo "<script>autoSaveCotizacion4();</script>";
         guardarCotizacion();
+        echo "<script> location.href='generar_cotizacion_p.php?idCotizacionEditar=".$_SESSION['cotizacion']->id."&idVersion=0';</script>";
     }
 ?>

@@ -4,7 +4,6 @@
     include_once 'Producto.php';
     include_once 'Cotizacion.php';
     include_once 'Cliente.php';
-    include "coneccion.php";
     include "checar_acceso.php";
     session_start();
 

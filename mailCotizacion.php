@@ -86,6 +86,8 @@
                 $widthRowImage = "1px";
             }
             list($rut, $arch) = explode('/', $imagen);
+
+            /*
             if($producto->tipo_moneda_usa != $_SESSION['cotizacion']->tipo_moneda)
             {
 				$precio_n=getFormatedNumberForMoney(( ((1 - $producto->descuento ) * $producto->precio) + ($producto->recargo * $_SESSION['dollar']) ) );
@@ -95,7 +97,30 @@
             {
 				$precio_n=getFormatedNumberForMoney(( ((1 - $producto->descuento ) * $producto->precio) + $producto->recargo ) );
 				$total_n=getFormatedNumberForMoney((((1-($producto->descuento))*$producto->precio)+$producto->recargo) * $producto->cantidad);
-			}      
+      }*/
+
+      /**Dolares a pesos */
+      if ($producto->tipo_moneda_usa == "1" && $_SESSION['cotizacion']->tipo_moneda == "0"){
+        $precio_n = getFormatedNumberForMoney((($producto->precio+($producto->recargo*$valor_moneda))-(($producto->precio+($producto->recargo*$valor_moneda))*($producto->descuento))));
+        $total_n = getFormatedNumberForMoney(((($producto->precio+($producto->recargo*$valor_moneda))-(($producto->precio+($producto->recargo*$valor_moneda))*($producto->descuento)))*$producto->cantidad));
+      }else if($producto->tipo_moneda_usa == "0" && $_SESSION['cotizacion']->tipo_moneda == "1"){
+        //pesos a dolar
+        $precio_n = getFormatedNumberForMoney((($producto->precio+$producto->recargo)-(($producto->precio+$producto->recargo)*($producto->descuento))));
+        $total_n = getFormatedNumberForMoney(((($producto->precio+$producto->recargo)-(($producto->precio+$producto->recargo)*($producto->descuento)))*$producto->cantidad));
+       }else if($producto->tipo_moneda_usa == $_SESSION['cotizacion']->tipo_moneda){
+          switch ($producto->tipo_moneda_usa){
+            case "0":
+              $precio_n = getFormatedNumberForMoney((($producto->precio+($producto->recargo*$valor_moneda))-(($producto->precio+($producto->recargo*$valor_moneda))*($producto->descuento))));
+              $total_n = getFormatedNumberForMoney(((($producto->precio+($producto->recargo*$valor_moneda))-(($producto->precio+($producto->recargo*$valor_moneda))*($producto->descuento)))*$producto->cantidad));
+            break;
+            case "1":
+              $precio_n = getFormatedNumberForMoney((($producto->precio+$producto->recargo)-(($producto->precio+$producto->recargo)*($producto->descuento))));
+              $total_n = getFormatedNumberForMoney(((($producto->precio+$producto->recargo)-(($producto->precio+$producto->recargo)*($producto->descuento)))*$producto->cantidad));
+            break;
+            default:
+            break;
+          }
+        }
             $rows .= "<tr>";
             $rows .= "<td valign=\"top\" class=\"texto_info_negro_cMail\"><div align=\"center\">$producto->partida</div></td>";
             $rows .= "<td valign=\"top\" class=\"texto_info_negro_cMail\" width=\"$widthRowImage\"><div align=\"center\"><img src=\"".$ruta."archivos/ch_".$arch."\"  /></div></td>";
